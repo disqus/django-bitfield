@@ -10,7 +10,7 @@ except Exception, e:
     VERSION = 'unknown'
 
 from django import forms
-from django.db.models.fields import BigIntegerField
+from django.db.models.fields import Field, BigIntegerField
 from django.db.models.fields.subclassing import Creator, LegacyConnection
 
 class Bit(object):
@@ -248,7 +248,7 @@ class BitField(BigIntegerField):
         return (field_class, args, kwargs)
 
     def formfield(self, form_class=BitFormField, **kwargs):
-        return super(BitField, self).formfield(form_class, **kwargs)
+        return Field.formfield(self, form_class, **kwargs)
 
     def get_prep_value(self, value):
         return int(value)
