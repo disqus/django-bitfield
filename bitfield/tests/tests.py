@@ -83,6 +83,12 @@ class BitTest(TestCase):
         self.assertEquals(int(bit), 1)
         self.assertEquals(bool(bit), True)
         self.assertFalse(not bit)
+    
+    def test_comparison(self):
+        self.assertEquals(Bit(0), Bit(0))
+        self.assertNotEquals(Bit(1), Bit(0))
+        self.assertNotEquals(Bit(0, 0), Bit(0, 1))
+        self.assertEquals(Bit(0, 1), Bit(0, 1))
 
 class BitFieldTest(TestCase):
     def test_basic(self):

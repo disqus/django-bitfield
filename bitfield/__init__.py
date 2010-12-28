@@ -37,7 +37,7 @@ class Bit(object):
         
     def __eq__(self, value):
         if isinstance(value, Bit):
-            value = value.value
+            return value.number == self.number and value.is_set == self.is_set
         return bool(value) == self.is_set
 
     def __ne__(self, value):
