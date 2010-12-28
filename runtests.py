@@ -24,8 +24,8 @@ def runtests(*test_args):
         test_args = ['bitfield']
     parent = dirname(abspath(__file__))
     sys.path.insert(0, parent)
-    failures = run_tests(test_args, verbosity=1, interactive=True)
+    failures = run_tests(test_args, verbosity=1, interactive='--no-input' not in sys.argv)
     sys.exit(failures)
 
 if __name__ == '__main__':
-    runtests(*sys.argv[1:])
+    runtests()
