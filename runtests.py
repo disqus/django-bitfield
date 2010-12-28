@@ -9,7 +9,7 @@ if not settings.configured:
         DATABASE_ENGINE='django.db.backends.postgresql_psycopg2',
         DATABASE_NAME='bitfield_test',
         INSTALLED_APPS=[
-            'django.contrib.contettypes',
+            'django.contrib.contenttypes',
             'bitfield',
             'bitfield.tests',
         ],
