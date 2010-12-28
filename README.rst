@@ -25,7 +25,7 @@ First you'll need to attach a BitField to your class. This acts as a BigIntegerF
 	from bitfield import BitField
 	
 	class MyModel(models.Model):
-	    flags = BitField(choices=(
+	    flags = BitField(flags=(
 	        'awesome_flag',
 	        'flaggy_foo',
 	        'baz_bar',
