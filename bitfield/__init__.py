@@ -128,7 +128,7 @@ class BitHandler(object):
         if true_or_false:
             self._value |= mask
         else:
-            self._value ^= mask
+            self._value &= (~mask)
         return Bit(bit_number, self._value & mask != 0)
     
     def keys(self):

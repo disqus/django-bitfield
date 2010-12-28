@@ -64,6 +64,18 @@ class BitHandlerTest(TestCase):
         self.assertEquals(int(bithandler), 2)
 
         self.assertEquals(bool(bithandler & 1), False)
+        
+        bithandler.FLAG_0 = False
+        self.assertEquals(bithandler.FLAG_0, False)
+
+        bithandler.FLAG_1 = True
+        self.assertEquals(bithandler.FLAG_0, False)
+        self.assertEquals(bithandler.FLAG_1, True)
+
+        bithandler.FLAG_2 = False
+        self.assertEquals(bithandler.FLAG_0, False)
+        self.assertEquals(bithandler.FLAG_1, True)
+        self.assertEquals(bithandler.FLAG_2, False)
 
 class BitTest(TestCase):
     def test_int(self):
