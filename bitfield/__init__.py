@@ -42,7 +42,7 @@ class Bit(object):
 
     def __ne__(self, value):
         if isinstance(value, Bit):
-            value = value.value
+            return value != self
         return bool(value) != self.is_set
 
     def __coerce__(self, value):
@@ -69,7 +69,7 @@ class BitHandler(object):
         return self._value == other._value
 
     def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, ', '.join('%s=%s' % (k, self.get_bit(n).value) for n, k in enumerate(self._keys)),)
+        return '<%s: %s>' % (self.__class__.__name__, ', '.join('%s=%s' % (k, self.get_bit(n).is_set) for n, k in enumerate(self._keys)),)
 
     def __str__(self):
         return str(self._value)
