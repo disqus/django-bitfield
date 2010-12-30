@@ -51,6 +51,9 @@ class Bit(object):
     def __invert__(self):
         return Bit(self.number, bool(not self.is_set))
 
+    def __sentry__(self):
+        return repr(self)
+
 class BitHandler(object):
     """
     Represents an array of bits, each as a ``Bit`` object.
@@ -118,7 +121,10 @@ class BitHandler(object):
         if key not in self._keys:
             raise AttributeError
         self.set_bit(self._keys.index(key), value)
-    
+
+    def __sentry__(self):
+        return repr(self)
+
     def get_bit(self, bit_number):
         mask = 2**int(bit_number)
         return Bit(bit_number, self._value & mask != 0)
