@@ -112,14 +112,14 @@ class BitHandler(object):
         if key.startswith('_'):
             return object.__getattribute__(self, key)
         if key not in self._keys:
-            raise AttributeError
+            raise AttributeError('%s is not a valid flag' % key)
         return self.get_bit(self._keys.index(key))
     
     def __setattr__(self, key, value):
         if key.startswith('_'):
             return object.__setattr__(self, key, value)
         if key not in self._keys:
-            raise AttributeError
+            raise AttributeError('%s is not a valid flag' % key)
         self.set_bit(self._keys.index(key), value)
 
     def __sentry__(self):
@@ -152,6 +152,9 @@ class BitFieldFlags(object):
     def __init__(self, flags):
         self._flags = flags
     
+    def __repr__(self):
+        return repr(self._flags)
+    
     def __iter__(self):
         for flag in self._flags:
             yield flag
@@ -160,6 +163,27 @@ class BitFieldFlags(object):
         if key not in self._flags:
             raise AttributeError
         return Bit(self._flags.index(key))
+    
+    def iteritems(self):
+        for flag in self._flags:
+            yield flag, Bit(self._flags.index(key))
+    
+    def iterkeys(self):
+        for flag in self._flags:
+            yield flag
+        
+    def itervalues(self):
+        for flag in self._flags:
+            yield Bit(self._flags.index(key))
+    
+    def items(self):
+        return list(self.iteritems())
+
+    def keys(self):
+        return list(self.iterkeys())
+
+    def values(self):
+        return list(self.itervalues())
 
 class BitFieldCreator(Creator):
     """
