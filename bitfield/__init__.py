@@ -22,7 +22,7 @@ class Bit(object):
         self.is_set = is_set
     
     def __repr__(self):
-        return '<%s: number=%d, set=%s>' % (self.__class__.__name__, self.number, self.is_set)
+        return '<%s: number=%d, is_set=%s>' % (self.__class__.__name__, self.number, self.is_set)
     
     def __str__(self):
         if self.is_set:
