@@ -166,7 +166,7 @@ class BitFieldFlags(object):
     
     def iteritems(self):
         for flag in self._flags:
-            yield flag, Bit(self._flags.index(key))
+            yield flag, Bit(self._flags.index(flag))
     
     def iterkeys(self):
         for flag in self._flags:
@@ -174,7 +174,7 @@ class BitFieldFlags(object):
         
     def itervalues(self):
         for flag in self._flags:
-            yield Bit(self._flags.index(key))
+            yield Bit(self._flags.index(flag))
     
     def items(self):
         return list(self.iteritems())
