@@ -20,14 +20,18 @@ class Bit(object):
     def __init__(self, number, is_set=True):
         self.number = number
         self.is_set = bool(is_set)
+        if self.is_set:
+            self.mask = 2**int(number)
+        else:
+            self.mask = 0
 
     def __repr__(self):
         return '<%s: number=%d, is_set=%s>' % (self.__class__.__name__, self.number, self.is_set)
 
-    def __str__(self):
-        if self.is_set:
-            return 'Yes'
-        return 'No'
+    # def __str__(self):
+    #     if self.is_set:
+    #         return 'Yes'
+    #     return 'No'
 
     def __int__(self):
         return int(self.is_set)
@@ -38,6 +42,10 @@ class Bit(object):
     def __eq__(self, value):
         if isinstance(value, Bit):
             return value.number == self.number and value.is_set == self.is_set
+        elif isinstance(value, bool):
+            return value == self.is_set
+        elif isinstance(value, int):
+            return value == self.mask
         return bool(value) == self.is_set
 
     def __ne__(self, value):
@@ -52,39 +60,34 @@ class Bit(object):
         return Bit(self.number, bool(not self.is_set))
 
     def __rand__(self, value):
-        if not self.is_set:
-            return value
-        return value & self.number
+        if isinstance(value, Bit):
+            value = value.mask
+        return int(value) & self.mask
+    __and__ = __rand__
 
     def __ror__(self, value):
-        if not self.is_set:
-            return value
-        return value | self.number
-
-    def __radd__(self, value):
-        if not self.is_set:
-            return value
-        return value + self.number
-
-    def __rsub__(self, value):
-        if not self.is_set:
-            return value
-        return value - self.number
+        if isinstance(value, Bit):
+            value = value.mask
+        return int(value) | self.mask
+    __or__ = __ror__
 
     def __rlshift__(self, value):
-        if not self.is_set:
-            return value
-        return value << self.number
+        if isinstance(value, Bit):
+            value = value.mask
+        return value << self.mask
+    __lshift__ = __rlshift__
 
     def __rrshift__(self, value):
-        if not self.is_set:
-            return value
-        return value >> self.number
+        if isinstance(value, Bit):
+            value = value.mask
+        return value >> self.mask
+    __rshift__ = __rrshift__
 
     def __rxor__(self, value):
-        if not self.is_set:
-            return value
-        return value ^ self.number
+        if isinstance(value, Bit):
+            value = value.mask
+        return value ^ self.mask
+    __xor__ = __rxor__
 
     def __sentry__(self):
         return repr(self)

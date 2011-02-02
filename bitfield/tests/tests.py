@@ -89,6 +89,7 @@ class BitTest(TestCase):
         self.assertNotEquals(Bit(1), Bit(0))
         self.assertNotEquals(Bit(0, 0), Bit(0, 1))
         self.assertEquals(Bit(0, 1), Bit(0, 1))
+        self.assertEquals(Bit(0), 1)
 
     def test_negate(self):
         self.assertFalse((~Bit(1)).is_set)
@@ -96,23 +97,31 @@ class BitTest(TestCase):
 
     def test_and(self):
         self.assertEquals(1 & Bit(2), 0)
-        self.assertEquals(1 & Bit(1), 1)
-        self.assertEquals(1 & ~Bit(1), 1)
+        self.assertEquals(1 & Bit(0), 1)
+        self.assertEquals(1 & ~Bit(0), 0)
+        self.assertEquals(Bit(0) & Bit(2), 0)
+        self.assertEquals(Bit(0) & Bit(0), 1)
+        self.assertEquals(Bit(0) & ~Bit(0), 0)
 
     def test_or(self):
-        self.assertEquals(1 | Bit(2), 3)
-        self.assertEquals(1 | Bit(5), 5)
+        self.assertEquals(1 | Bit(2), 5)
+        self.assertEquals(1 | Bit(5), 33)
         self.assertEquals(1 | ~Bit(2), 1)
+        self.assertEquals(Bit(0) | Bit(2), 5)
+        self.assertEquals(Bit(0) | Bit(5), 33)
+        self.assertEquals(Bit(0) | ~Bit(2), 1)
 
-    def test_add(self):
-        self.assertEquals(1 + Bit(2), 3)
-        self.assertEquals(1 + Bit(5), 6)
-        self.assertEquals(1 + ~Bit(2), 1)
-
-    def test_sub(self):
-        self.assertEquals(1 - Bit(2), -1)
-        self.assertEquals(1 - Bit(5), -4)
-        self.assertEquals(1 - ~Bit(2), 1)
+    def test_xor(self):
+        self.assertEquals(1 ^ Bit(2), 5)
+        self.assertEquals(1 ^ Bit(0), 0)
+        self.assertEquals(1 ^ Bit(1), 3)
+        self.assertEquals(1 ^ Bit(5), 33)
+        self.assertEquals(1 ^ ~Bit(2), 1)
+        self.assertEquals(Bit(0) ^ Bit(2), 5)
+        self.assertEquals(Bit(0) ^ Bit(0), 0)
+        self.assertEquals(Bit(0) ^ Bit(1), 3)
+        self.assertEquals(Bit(0) ^ Bit(5), 33)
+        self.assertEquals(Bit(0) ^ ~Bit(2), 1)
 
 class BitFieldTest(TestCase):
     def test_basic(self):
@@ -165,7 +174,18 @@ class BitFieldTest(TestCase):
 
     def test_save(self):
         instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0)
+        self.assertTrue(instance.flags.FLAG_0)
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=1).exists())
         self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
+        instance.delete()
+
+        instance = BitFieldTestModel.objects.create(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1))
+        self.assertTrue(instance.flags.FLAG_0)
+        self.assertTrue(instance.flags.FLAG_1)
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=3).exists())
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_1).exists())
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)).exists())
 
 class BitFieldSerializationTest(TestCase):
     def test_adding_flags(self):
