@@ -17,7 +17,7 @@ class mytest(test):
 
 setup(
     name='django-bitfield',
-    version='1.1.0',
+    version='1.2.0',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/django-bitfield',
