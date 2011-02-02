@@ -46,12 +46,10 @@ class Bit(object):
             return value == self.is_set
         elif isinstance(value, int):
             return value == self.mask
-        return bool(value) == self.is_set
+        return value == self.is_set
 
     def __ne__(self, value):
-        if isinstance(value, Bit):
-            return value != self
-        return bool(value) != self.is_set
+        return not self == value
 
     def __coerce__(self, value):
         return (self.is_set, bool(value))
