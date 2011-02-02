@@ -64,7 +64,7 @@ class BitHandlerTest(TestCase):
         self.assertEquals(int(bithandler), 2)
 
         self.assertEquals(bool(bithandler & 1), False)
-        
+
         bithandler.FLAG_0 = False
         self.assertEquals(bithandler.FLAG_0, False)
 
@@ -83,12 +83,36 @@ class BitTest(TestCase):
         self.assertEquals(int(bit), 1)
         self.assertEquals(bool(bit), True)
         self.assertFalse(not bit)
-    
+
     def test_comparison(self):
         self.assertEquals(Bit(0), Bit(0))
         self.assertNotEquals(Bit(1), Bit(0))
         self.assertNotEquals(Bit(0, 0), Bit(0, 1))
         self.assertEquals(Bit(0, 1), Bit(0, 1))
+
+    def test_negate(self):
+        self.assertFalse((~Bit(1)).is_set)
+        self.assertTrue(Bit(1).is_set)
+
+    def test_and(self):
+        self.assertEquals(1 & Bit(2), 0)
+        self.assertEquals(1 & Bit(1), 1)
+        self.assertEquals(1 & ~Bit(1), 1)
+
+    def test_or(self):
+        self.assertEquals(1 | Bit(2), 3)
+        self.assertEquals(1 | Bit(5), 5)
+        self.assertEquals(1 | ~Bit(2), 1)
+
+    def test_add(self):
+        self.assertEquals(1 + Bit(2), 3)
+        self.assertEquals(1 + Bit(5), 6)
+        self.assertEquals(1 + ~Bit(2), 1)
+
+    def test_sub(self):
+        self.assertEquals(1 - Bit(2), -1)
+        self.assertEquals(1 - Bit(5), -4)
+        self.assertEquals(1 - ~Bit(2), 1)
 
 class BitFieldTest(TestCase):
     def test_basic(self):

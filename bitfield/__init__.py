@@ -19,22 +19,22 @@ class Bit(object):
     """
     def __init__(self, number, is_set=True):
         self.number = number
-        self.is_set = is_set
-    
+        self.is_set = bool(is_set)
+
     def __repr__(self):
         return '<%s: number=%d, is_set=%s>' % (self.__class__.__name__, self.number, self.is_set)
-    
+
     def __str__(self):
         if self.is_set:
             return 'Yes'
         return 'No'
-    
+
     def __int__(self):
         return int(self.is_set)
-    
+
     def __nonzero__(self):
         return self.is_set
-        
+
     def __eq__(self, value):
         if isinstance(value, Bit):
             return value.number == self.number and value.is_set == self.is_set
@@ -50,6 +50,41 @@ class Bit(object):
 
     def __invert__(self):
         return Bit(self.number, bool(not self.is_set))
+
+    def __rand__(self, value):
+        if not self.is_set:
+            return value
+        return value & self.number
+
+    def __ror__(self, value):
+        if not self.is_set:
+            return value
+        return value | self.number
+
+    def __radd__(self, value):
+        if not self.is_set:
+            return value
+        return value + self.number
+
+    def __rsub__(self, value):
+        if not self.is_set:
+            return value
+        return value - self.number
+
+    def __rlshift__(self, value):
+        if not self.is_set:
+            return value
+        return value << self.number
+
+    def __rrshift__(self, value):
+        if not self.is_set:
+            return value
+        return value >> self.number
+
+    def __rxor__(self, value):
+        if not self.is_set:
+            return value
+        return value ^ self.number
 
     def __sentry__(self):
         return repr(self)
@@ -114,7 +149,7 @@ class BitHandler(object):
         if key not in self._keys:
             raise AttributeError('%s is not a valid flag' % key)
         return self.get_bit(self._keys.index(key))
-    
+
     def __setattr__(self, key, value):
         if key.startswith('_'):
             return object.__setattr__(self, key, value)
@@ -128,7 +163,7 @@ class BitHandler(object):
     def get_bit(self, bit_number):
         mask = 2**int(bit_number)
         return Bit(bit_number, self._value & mask != 0)
-    
+
     def set_bit(self, bit_number, true_or_false):
         mask = 2**int(bit_number)
         if true_or_false:
@@ -136,7 +171,7 @@ class BitHandler(object):
         else:
             self._value &= (~mask)
         return Bit(bit_number, self._value & mask != 0)
-    
+
     def keys(self):
         return self._keys
 
@@ -151,31 +186,31 @@ class BitFormField(forms.IntegerField):
 class BitFieldFlags(object):
     def __init__(self, flags):
         self._flags = flags
-    
+
     def __repr__(self):
         return repr(self._flags)
-    
+
     def __iter__(self):
         for flag in self._flags:
             yield flag
-    
+
     def __getattr__(self, key):
         if key not in self._flags:
             raise AttributeError
         return Bit(self._flags.index(key))
-    
+
     def iteritems(self):
         for flag in self._flags:
             yield flag, Bit(self._flags.index(flag))
-    
+
     def iterkeys(self):
         for flag in self._flags:
             yield flag
-        
+
     def itervalues(self):
         for flag in self._flags:
             yield Bit(self._flags.index(flag))
-    
+
     def items(self):
         return list(self.iteritems())
 
@@ -238,7 +273,7 @@ class BitQueryLookupWrapper(object):
                     [])
         return ("(%s.%s & ~%d)" % (qn(self.table_alias), qn(self.column), mask),
                 [])
-        
+
 
 class BitQuerySaveWrapper(BitQueryLookupWrapper):
     def as_sql(self, qn, connection):
@@ -255,7 +290,7 @@ class BitQuerySaveWrapper(BitQueryLookupWrapper):
             raise NotImplementedError
         else:
             XOR_OPERATOR = '^'
-        
+
         mask = 2**self.bit.number
         if self.bit:
             return ("%s.%s | %d" % (qn(self.table_alias), qn(self.column), mask),
