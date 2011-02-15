@@ -20,10 +20,9 @@ class Bit(object):
     def __init__(self, number, is_set=True):
         self.number = number
         self.is_set = bool(is_set)
-        if self.is_set:
-            self.mask = 2**int(number)
-        else:
-            self.mask = 0
+        self.mask = 2**int(number)
+        if not self.is_set:
+            self.mask = ~self.mask
 
     def __repr__(self):
         return '<%s: number=%d, is_set=%s>' % (self.__class__.__name__, self.number, self.is_set)
@@ -34,7 +33,7 @@ class Bit(object):
     #     return 'No'
 
     def __int__(self):
-        return int(self.is_set)
+        return self.mask
 
     def __nonzero__(self):
         return self.is_set
@@ -55,37 +54,57 @@ class Bit(object):
         return (self.is_set, bool(value))
 
     def __invert__(self):
-        return Bit(self.number, bool(not self.is_set))
+        return ~self.mask
+
+    def __and__(self, value):
+        if isinstance(value, Bit):
+            value = value.mask
+        return value & self.mask
 
     def __rand__(self, value):
         if isinstance(value, Bit):
             value = value.mask
-        return int(value) & self.mask
-    __and__ = __rand__
+        return self.mask & value
+
+    def __or__(self, value):
+        if isinstance(value, Bit):
+            value = value.mask
+        return value | self.mask
 
     def __ror__(self, value):
         if isinstance(value, Bit):
             value = value.mask
-        return int(value) | self.mask
-    __or__ = __ror__
+        return self.mask | value
+
+    def __lshift__(self, value):
+        if isinstance(value, Bit):
+            value = value.mask
+        return value << self.mask
 
     def __rlshift__(self, value):
         if isinstance(value, Bit):
             value = value.mask
-        return value << self.mask
-    __lshift__ = __rlshift__
+        return self.mask << value
+
+    def __rshift__(self, value):
+        if isinstance(value, Bit):
+            value = value.mask
+        return value >> self.mask
 
     def __rrshift__(self, value):
         if isinstance(value, Bit):
             value = value.mask
-        return value >> self.mask
-    __rshift__ = __rrshift__
+        return self.mask >> value
+
+    def __xor__(self, value):
+        if isinstance(value, Bit):
+            value = value.mask
+        return value ^ self.mask
 
     def __rxor__(self, value):
         if isinstance(value, Bit):
             value = value.mask
-        return value ^ self.mask
-    __xor__ = __rxor__
+        return self.mask ^ value
 
     def __sentry__(self):
         return repr(self)
@@ -268,13 +287,11 @@ class BitQueryLookupWrapper(object):
 
         This will be called by Where.as_sql()
         """
-        mask = 2**self.bit.number
         if self.bit:
-            return ("(%s.%s | %d)" % (qn(self.table_alias), qn(self.column), mask),
+            return ("(%s.%s | %d)" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                     [])
-        return ("(%s.%s & ~%d)" % (qn(self.table_alias), qn(self.column), mask),
+        return ("(%s.%s & ~%d)" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                 [])
-
 
 class BitQuerySaveWrapper(BitQueryLookupWrapper):
     def as_sql(self, qn, connection):
@@ -292,11 +309,10 @@ class BitQuerySaveWrapper(BitQueryLookupWrapper):
         else:
             XOR_OPERATOR = '^'
 
-        mask = 2**self.bit.number
         if self.bit:
-            return ("%s.%s | %d" % (qn(self.table_alias), qn(self.column), mask),
+            return ("%s.%s | %d" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                     [])
-        return ("%s.%s %s %d" % (qn(self.table_alias), qn(self.column), XOR_OPERATOR, mask),
+        return ("%s.%s %s %d" % (qn(self.table_alias), qn(self.column), XOR_OPERATOR, self.bit.mask),
                 [])
 
 class BitField(BigIntegerField):
@@ -316,7 +332,13 @@ class BitField(BigIntegerField):
     def formfield(self, form_class=BitFormField, **kwargs):
         return Field.formfield(self, form_class, **kwargs)
 
+    def pre_save(self, instance, add):
+        value = getattr(instance, self.attname)
+        return value
+
     def get_prep_value(self, value):
+        if isinstance(value, Bit):
+            value = value.mask
         return int(value)
 
     def get_db_prep_save(self, value, connection):
@@ -338,6 +360,8 @@ class BitField(BigIntegerField):
         return super(BitField, self).get_prep_lookup(lookup_type, value)
 
     def to_python(self, value):
+        if isinstance(value, Bit):
+            value = value.mask
         if not isinstance(value, BitHandler):
             # Regression for #1425: fix bad data that was created resulting
             # in negative values for flags.  Compute the value that would
