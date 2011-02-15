@@ -39,10 +39,10 @@ Now you can use the field using very familiar Django operations::
 	o = MyModel.objects.create(flags=0)
 
 	# Add awesome_flag (does not work in SQLite)
-	MyModel.objects.filter(pk=o.pk).update(flags=F('flags') & MyModel.flags.awesome_flag)
+	MyModel.objects.filter(pk=o.pk).update(flags=F('flags') | MyModel.flags.awesome_flag)
 
 	# Set flags manually to [awesome_flag, flaggy_foo]
-	MyModel.objects.filter(pk=o.pk).update(flags=3)
+	MyModel.objects.filter(pk=o.pk).update(flags=MyModel.flags.awesome_flag | MyModel.flags.flaggy_foo)
 
 	# Remove awesome_flag (does not work in SQLite)
 	MyModel.objects.filter(pk=o.pk).update(flags=F('flags') & ~MyModel.flags.awesome_flag)
