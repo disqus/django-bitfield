@@ -162,7 +162,7 @@ class BitFieldTest(TestCase):
         instance = BitFieldTestModel.objects.create(flags=0)
         self.assertFalse(instance.flags.FLAG_0)
 
-        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') | int(BitFieldTestModel.flags.FLAG_1))
+        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') | BitFieldTestModel.flags.FLAG_1)
         instance = BitFieldTestModel.objects.get(pk=instance.pk)
         self.assertTrue(instance.flags.FLAG_1)
 
@@ -179,26 +179,33 @@ class BitFieldTest(TestCase):
         self.assertTrue(instance.flags.FLAG_1)
         self.assertFalse(instance.flags.FLAG_3)
 
-    def test_save(self):
-        instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0)
-        self.assertTrue(instance.flags.FLAG_0)
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=1).exists())
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
-        instance.delete()
+    # def test_save(self):
+    #     instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0)
+    #     self.assertTrue(instance.flags.FLAG_0)
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=1).exists())
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
+    #     instance.delete()
+    # 
+    #     instance = BitFieldTestModel.objects.create(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1))
+    #     self.assertTrue(instance.flags.FLAG_0)
+    #     self.assertTrue(instance.flags.FLAG_1)
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=3).exists())
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_1).exists())
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)).exists())
+    #     instance.delete()
+    # 
+    #     instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_3)
+    #     self.assertTrue(instance.flags.FLAG_3)
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=8).exists())
+    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_3).exists())
 
-        instance = BitFieldTestModel.objects.create(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1))
-        self.assertTrue(instance.flags.FLAG_0)
-        self.assertTrue(instance.flags.FLAG_1)
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=3).exists())
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_1).exists())
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)).exists())
-        instance.delete()
-
-        instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_3)
-        self.assertTrue(instance.flags.FLAG_3)
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=8).exists())
-        self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_3).exists())
+    def test_negate(self):
+        instance_1 = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)
+        instance_2 = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_1)
+        self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_0).count(), 1)
+        self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_1).count(), 0)
+        self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_2).count(), 2)
 
 class BitFieldSerializationTest(TestCase):
     def test_adding_flags(self):

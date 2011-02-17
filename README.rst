@@ -47,6 +47,12 @@ Now you can use the field using very familiar Django operations::
 	# Remove awesome_flag (does not work in SQLite)
 	MyModel.objects.filter(pk=o.pk).update(flags=F('flags') & ~MyModel.flags.awesome_flag)
 
+	# Find by awesome_flag
+	MyModel.objects.filter(flags=MyModel.flags.awesome_flag)
+
+	# Exclude by awesome_flag
+	MyModel.objects.filter(flags=~MyModel.flags.awesome_flag)
+
 	# Test awesome_flag
 	if o.flags.awesome_flag:
 	    print "Happy times!"

@@ -10,6 +10,7 @@ except Exception, e:
     VERSION = 'unknown'
 
 from django import forms
+from django.db.models.sql.expressions import SQLEvaluator
 from django.db.models.fields import Field, BigIntegerField
 from django.db.models.fields.subclassing import Creator, LegacyConnection
 
@@ -54,7 +55,7 @@ class Bit(object):
         return (self.is_set, bool(value))
 
     def __invert__(self):
-        return ~self.mask
+        return self.__class__(self.number, not self.is_set)
 
     def __and__(self, value):
         if isinstance(value, Bit):
@@ -108,6 +109,12 @@ class Bit(object):
 
     def __sentry__(self):
         return repr(self)
+
+    def prepare(self, evaluator, query, allow_joins):
+        return self
+
+    def evaluate(self, evaluator, qn, connection):
+        return self.mask, []
 
 class BitHandler(object):
     """
@@ -256,24 +263,6 @@ class BitFieldCreator(Creator):
             retval._keys = self.field.flags
         return retval
 
-class BitFieldMeta(LegacyConnection):
-    """
-    Modified SubFieldBase to use our contribute_to_class method (instead of
-    monkey-patching make_contrib).  This uses our BitFieldCreator descriptor
-    in place of the default.
-
-    NOTE: If we find ourselves needing custom descriptors for fields, we could
-    make this generic.
-    """
-    def __new__(cls, name, bases, attrs):
-        def contribute_to_class(self, cls, name):
-            super(self.__class__, self).contribute_to_class(cls, name)
-            setattr(cls, self.name, BitFieldCreator(self))
-
-        new_class = super(BitFieldMeta, cls).__new__(cls, name, bases, attrs)
-        new_class.contribute_to_class = contribute_to_class
-        return new_class
-
 class BitQueryLookupWrapper(object):
     def __init__(self, alias, column, bit):
         self.table_alias = alias
@@ -290,7 +279,7 @@ class BitQueryLookupWrapper(object):
         if self.bit:
             return ("(%s.%s | %d)" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                     [])
-        return ("(%s.%s & ~%d)" % (qn(self.table_alias), qn(self.column), self.bit.mask),
+        return ("(%s.%s & %d)" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                 [])
 
 class BitQuerySaveWrapper(BitQueryLookupWrapper):
@@ -315,11 +304,29 @@ class BitQuerySaveWrapper(BitQueryLookupWrapper):
         return ("%s.%s %s %d" % (qn(self.table_alias), qn(self.column), XOR_OPERATOR, self.bit.mask),
                 [])
 
+class BitFieldMeta(LegacyConnection):
+    """
+    Modified SubFieldBase to use our contribute_to_class method (instead of
+    monkey-patching make_contrib).  This uses our BitFieldCreator descriptor
+    in place of the default.
+
+    NOTE: If we find ourselves needing custom descriptors for fields, we could
+    make this generic.
+    """
+    def __new__(cls, name, bases, attrs):
+        def contribute_to_class(self, cls, name):
+            BigIntegerField.contribute_to_class(self, cls, name)
+            setattr(cls, self.name, BitFieldCreator(self))
+
+        new_class = super(BitFieldMeta, cls).__new__(cls, name, bases, attrs)
+        new_class.contribute_to_class = contribute_to_class
+        return new_class
+
 class BitField(BigIntegerField):
     __metaclass__ = BitFieldMeta
 
     def __init__(self, flags, *args, **kwargs):
-        super(BitField, self).__init__(*args, **kwargs)
+        BigIntegerField.__init__(self, *args, **kwargs)
         self.flags = flags
 
     def south_field_triple(self):
@@ -341,23 +348,27 @@ class BitField(BigIntegerField):
             value = value.mask
         return int(value)
 
-    def get_db_prep_save(self, value, connection):
-        if isinstance(value, Bit):
-            return BitQuerySaveWrapper(self.model._meta.db_table, self.name, value)
-        return super(BitField, self).get_db_prep_save(value, connection=connection)
+    # def get_db_prep_save(self, value, connection):
+    #     if isinstance(value, Bit):
+    #         return BitQuerySaveWrapper(self.model._meta.db_table, self.name, value)
+    #     return super(BitField, self).get_db_prep_save(value, connection=connection)
 
     def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
+        if isinstance(value, SQLEvaluator) and isinstance(value.expression, Bit):
+            value = value.expression
         if isinstance(value, Bit):
             return BitQueryLookupWrapper(self.model._meta.db_table, self.name, value)
-        return super(BitField, self).get_db_prep_lookup(lookup_type=lookup_type, value=value,
+        return BigIntegerField.get_db_prep_lookup(self, lookup_type=lookup_type, value=value,
                                                         connection=connection, prepared=prepared)
 
     def get_prep_lookup(self, lookup_type, value):
+        if isinstance(value, SQLEvaluator) and isinstance(value.expression, Bit):
+            value = value.expression
         if isinstance(value, Bit):
             if lookup_type in ('exact',):
                 return value
             raise TypeError('Lookup type %r not supported with `Bit` type.' % lookup_type)
-        return super(BitField, self).get_prep_lookup(lookup_type, value)
+        return BigIntegerField.get_prep_lookup(self, lookup_type, value)
 
     def to_python(self, value):
         if isinstance(value, Bit):
