@@ -24,7 +24,9 @@ setup(
     description = 'BitField in Django',
     packages=find_packages(),
     zip_safe=False,
-    install_requires=[],
+    install_requires=[
+        'django',
+    ],
     test_suite = 'bitfield.tests',
     include_package_data=True,
     cmdclass={"test": mytest},
