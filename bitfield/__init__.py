@@ -201,6 +201,17 @@ class BitHandler(object):
 
     def keys(self):
         return self._keys
+    
+    def iterkeys(self):
+        return iter(self._keys)
+        
+    def items(self):
+        return list(self.iteritems())
+
+    def iteritems(self):
+        for k in self._keys:
+            yield (k, getattr(self, k).is_set)
+            
 
 class BitFormField(forms.IntegerField):
     def __init__(self, *args, **kwargs):

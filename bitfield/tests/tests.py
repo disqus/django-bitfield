@@ -207,11 +207,18 @@ class BitFieldTest(TestCase):
         self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_1).count(), 0)
         self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_2).count(), 2)
 
+    def test_default_value(self):
+        instance = BitFieldTestModel.objects.create()
+        self.assertTrue(instance.flags.FLAG_0)
+        self.assertTrue(instance.flags.FLAG_1)
+        self.assertFalse(instance.flags.FLAG_2)
+        self.assertFalse(instance.flags.FLAG_3)
+
 class BitFieldSerializationTest(TestCase):
     def test_adding_flags(self):
         import pickle
 
-        inst = BitFieldTestModel.objects.create()
+        inst = BitFieldTestModel.objects.create(flags=0)
         data = pickle.dumps(inst)
 
         # ensure the flag is actually working

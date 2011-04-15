@@ -8,4 +8,4 @@ class BitFieldTestModel(models.Model):
         'FLAG_1',
         'FLAG_2',
         'FLAG_3',
-    ))
+    ), default=3)
