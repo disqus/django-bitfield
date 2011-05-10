@@ -184,6 +184,9 @@ class BitHandler(object):
             raise AttributeError('%s is not a valid flag' % key)
         self.set_bit(self._keys.index(key), value)
 
+    def __iter__(self):
+        return self.iteritems()
+
     def __sentry__(self):
         return repr(self)
 
@@ -211,7 +214,7 @@ class BitHandler(object):
     def iteritems(self):
         for k in self._keys:
             yield (k, getattr(self, k).is_set)
-            
+    
 
 class BitFormField(forms.IntegerField):
     def __init__(self, *args, **kwargs):
