@@ -152,7 +152,7 @@ class BitFieldTest(TestCase):
         self.assertEqual(BitFieldTestModel.objects.filter(flags__lt=0).count(), 0)
 
     def test_select(self):
-        instance = BitFieldTestModel.objects.create(flags=3)
+        BitFieldTestModel.objects.create(flags=3)
         self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_1).exists())
         self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
         self.assertFalse(BitFieldTestModel.objects.exclude(flags=BitFieldTestModel.flags.FLAG_0).exists())
@@ -179,13 +179,36 @@ class BitFieldTest(TestCase):
         self.assertTrue(instance.flags.FLAG_1)
         self.assertFalse(instance.flags.FLAG_3)
 
+    def test_update_with_handler(self):
+        instance = BitFieldTestModel.objects.create(flags=0)
+        self.assertFalse(instance.flags.FLAG_0)
+
+        instance.flags.FLAG_1 = True
+
+        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') | instance.flags)
+        instance = BitFieldTestModel.objects.get(pk=instance.pk)
+        self.assertTrue(instance.flags.FLAG_1)
+
+        # BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') | ((~BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_3)))
+        # instance = BitFieldTestModel.objects.get(pk=instance.pk)
+        # self.assertFalse(instance.flags.FLAG_0)
+        # self.assertTrue(instance.flags.FLAG_1)
+        # self.assertTrue(instance.flags.FLAG_3)
+        # self.assertFalse(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
+
+        # BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') & ~BitFieldTestModel.flags.FLAG_3)
+        # instance = BitFieldTestModel.objects.get(pk=instance.pk)
+        # self.assertFalse(instance.flags.FLAG_0)
+        # self.assertTrue(instance.flags.FLAG_1)
+        # self.assertFalse(instance.flags.FLAG_3)
+
     # def test_save(self):
     #     instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0)
     #     self.assertTrue(instance.flags.FLAG_0)
     #     self.assertTrue(BitFieldTestModel.objects.filter(flags=1).exists())
     #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
     #     instance.delete()
-    # 
+    #
     #     instance = BitFieldTestModel.objects.create(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1))
     #     self.assertTrue(instance.flags.FLAG_0)
     #     self.assertTrue(instance.flags.FLAG_1)
@@ -194,15 +217,15 @@ class BitFieldTest(TestCase):
     #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_1).exists())
     #     self.assertTrue(BitFieldTestModel.objects.filter(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)).exists())
     #     instance.delete()
-    # 
+    #
     #     instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_3)
     #     self.assertTrue(instance.flags.FLAG_3)
     #     self.assertTrue(BitFieldTestModel.objects.filter(flags=8).exists())
     #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_3).exists())
 
     def test_negate(self):
-        instance_1 = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)
-        instance_2 = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_1)
+        BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)
+        BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_1)
         self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_0).count(), 1)
         self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_1).count(), 0)
         self.assertEqual(BitFieldTestModel.objects.filter(flags=~BitFieldTestModel.flags.FLAG_2).count(), 2)

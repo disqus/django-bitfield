@@ -190,6 +190,16 @@ class BitHandler(object):
     def __sentry__(self):
         return repr(self)
 
+    def _get_mask(self):
+        return self._value
+    mask = property(_get_mask)
+
+    def prepare(self, evaluator, query, allow_joins):
+        return self
+
+    def evaluate(self, evaluator, qn, connection):
+        return self.mask, []
+
     def get_bit(self, bit_number):
         mask = 2**int(bit_number)
         return Bit(bit_number, self._value & mask != 0)
@@ -204,17 +214,16 @@ class BitHandler(object):
 
     def keys(self):
         return self._keys
-    
+
     def iterkeys(self):
         return iter(self._keys)
-        
+
     def items(self):
         return list(self.iteritems())
 
     def iteritems(self):
         for k in self._keys:
             yield (k, getattr(self, k).is_set)
-    
 
 class BitFormField(forms.IntegerField):
     def __init__(self, *args, **kwargs):
@@ -358,7 +367,7 @@ class BitField(BigIntegerField):
         return value
 
     def get_prep_value(self, value):
-        if isinstance(value, Bit):
+        if isinstance(value, (BitHandler, Bit)):
             value = value.mask
         return int(value)
 
@@ -370,7 +379,7 @@ class BitField(BigIntegerField):
     def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
         if isinstance(value, SQLEvaluator) and isinstance(value.expression, Bit):
             value = value.expression
-        if isinstance(value, Bit):
+        if isinstance(value, (BitHandler, Bit)):
             return BitQueryLookupWrapper(self.model._meta.db_table, self.name, value)
         return BigIntegerField.get_db_prep_lookup(self, lookup_type=lookup_type, value=value,
                                                         connection=connection, prepared=prepared)
