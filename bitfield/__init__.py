@@ -230,6 +230,8 @@ class BitFormField(forms.IntegerField):
         super(BitFormField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
+        if value is None:
+            value = 0
         value = int(value)
         return super(BitFormField, self).clean(value)
 
