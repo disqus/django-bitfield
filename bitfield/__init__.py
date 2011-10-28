@@ -12,7 +12,7 @@ except Exception, e:
 from django import forms
 from django.db.models.sql.expressions import SQLEvaluator
 from django.db.models.fields import Field, BigIntegerField
-from django.db.models.fields.subclassing import Creator, LegacyConnection
+from django.db.models.fields.subclassing import Creator, SubfieldBase
 
 class Bit(object):
     """
@@ -327,7 +327,7 @@ class BitQuerySaveWrapper(BitQueryLookupWrapper):
         return ("%s.%s %s %d" % (qn(self.table_alias), qn(self.column), XOR_OPERATOR, self.bit.mask),
                 [])
 
-class BitFieldMeta(LegacyConnection):
+class BitFieldMeta(SubfieldBase):
     """
     Modified SubFieldBase to use our contribute_to_class method (instead of
     monkey-patching make_contrib).  This uses our BitFieldCreator descriptor
