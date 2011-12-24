@@ -10,6 +10,7 @@ except Exception, e:
     VERSION = 'unknown'
 
 from django import forms
+from django.db.models import signals
 from django.db.models.sql.expressions import SQLEvaluator
 from django.db.models.fields import Field, BigIntegerField
 from django.db.models.fields.subclassing import Creator, LegacyConnection
@@ -411,3 +412,64 @@ class BitField(BigIntegerField):
             # Ensure flags are consistent for unpickling
             value._keys = self.flags
         return value
+
+class CompositeBitField(object):
+    def __init__(self, fields):
+        self.fields = fields
+
+    def contribute_to_class(self, cls, name):
+        self.name = name
+        self.model = cls
+        cls._meta.add_virtual_field(self)
+
+        signals.class_prepared.connect(self.validate_fields, sender=cls)
+
+        setattr(cls, name, self)
+
+    def validate_fields(self, sender, **kwargs):
+        cls = sender
+        model_fields = dict([
+            (f.name, f) for f in cls._meta.fields if f.name in self.fields])
+        all_flags = sum([model_fields[f].flags for f in self.fields], ())
+        if len(all_flags) != len(set(all_flags)):
+            raise ValueError('BitField flags must be unique.')
+
+    def __get__(self, instance, instance_type=None):
+        class CompositeBitFieldWrapper(object):
+            def __init__(self, fields):
+                self.fields = fields
+
+            def __getattr__(self, attr):
+                if attr == 'fields':
+                    return super(CompositeBitFieldWrapper, self).__getattr__(attr)
+
+                for field in self.fields:
+                    if hasattr(field, attr):
+                        return getattr(field, attr)
+                raise AttributeError('%s is not a valid flag' % attr)
+
+            def __hasattr__(self, attr):
+                if attr == 'fields':
+                    return super(CompositeBitFieldWrapper, self).__hasattr__(attr)
+
+                for field in self.fields:
+                    if hasattr(field, attr):
+                        return True
+                return False
+
+            def __setattr__(self, attr, value):
+                if attr == 'fields':
+                    super(CompositeBitFieldWrapper, self).__setattr__(attr, value)
+                    return
+
+                for field in self.fields:
+                    if hasattr(field, attr):
+                        setattr(field, attr, value)
+                        return
+                raise AttributeError('%s is not a valid flag' % attr)
+        fields = [getattr(instance, f) for f in self.fields]
+        return CompositeBitFieldWrapper(fields)
+
+    def __set__(self, *args, **kwargs):
+        raise NotImplementedError('CompositeBitField cannot be set.')
+
