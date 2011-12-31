@@ -7,8 +7,12 @@ from django.conf import settings
 
 if not settings.configured:
     settings.configure(
-        DATABASE_ENGINE='django.db.backends.postgresql_psycopg2',
-        DATABASE_NAME='bitfield_test',
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'NAME': 'bitfield_test',
+            }
+        },
         INSTALLED_APPS=[
             'django.contrib.contenttypes',
             'bitfield',
@@ -18,14 +22,16 @@ if not settings.configured:
         DEBUG=False,
     )
 
-from django.test.simple import run_tests
+from django.test.simple import DjangoTestSuiteRunner
 
 def runtests(*test_args):
     if not test_args:
         test_args = ['bitfield']
     parent = dirname(abspath(__file__))
     sys.path.insert(0, parent)
-    failures = run_tests(test_args, verbosity=1, interactive='--no-input' not in sys.argv)
+    interactive = '--no-input' not in sys.argv
+    failures = DjangoTestSuiteRunner().run_tests(test_args, verbosity=1,
+                                                 interactive=interactive)
     sys.exit(failures)
 
 if __name__ == '__main__':
