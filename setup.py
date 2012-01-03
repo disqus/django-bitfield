@@ -8,16 +8,18 @@ setup(
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/django-bitfield',
-    description = 'BitField in Django',
+    description='BitField in Django',
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
         'Django>=1.2,<1.4',
     ],
     tests_require=[
-        'psycopg2',
+        'nose>=1.0',
+        'django-nose==0.1.3',
+        'psycopg2==2.3',
     ],
-    test_suite = 'runtests.runtests',
+    test_suite='runtests.runtests',
     include_package_data=True,
     classifiers=[
         'Framework :: Django',
