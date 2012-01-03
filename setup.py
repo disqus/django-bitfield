@@ -1,19 +1,6 @@
 #!/usr/bin/env python
 
-try:
-    from setuptools import setup, find_packages
-    from setuptools.command.test import test
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
-    from setuptools.command.test import test
-
-
-class mytest(test):
-    def run(self, *args, **kwargs):
-        from runtests import runtests
-        runtests()
+from setuptools import setup, find_packages
 
 setup(
     name='django-bitfield',
@@ -25,11 +12,13 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'django',
+        'Django>=1.2,<1.4',
     ],
-    test_suite = 'bitfield.tests',
+    tests_require=[
+        'psycopg2',
+    ],
+    test_suite = 'runtests.runtests',
     include_package_data=True,
-    cmdclass={"test": mytest},
     classifiers=[
         'Framework :: Django',
         'Intended Audience :: Developers',
