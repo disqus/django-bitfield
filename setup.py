@@ -14,8 +14,10 @@ setup(
     install_requires=[
         'Django>=1.2,<1.4',
     ],
-    tests_require=[
+    setup_requires=[
         'nose>=1.0',
+    ],
+    tests_require=[
         'django-nose==0.1.3',
         'psycopg2==2.3',
     ],
