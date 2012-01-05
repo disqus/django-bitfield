@@ -117,7 +117,7 @@ class BitField(BigIntegerField):
         if isinstance(value, SQLEvaluator) and isinstance(value.expression, Bit):
             value = value.expression
         if isinstance(value, (BitHandler, Bit)):
-            return BitQueryLookupWrapper(self.model._meta.db_table, self.name, value)
+            return BitQueryLookupWrapper(self.model._meta.db_table, self.db_column or self.name, value)
         return BigIntegerField.get_db_prep_lookup(self, lookup_type=lookup_type, value=value,
                                                         connection=connection, prepared=prepared)
 
