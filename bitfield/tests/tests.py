@@ -140,8 +140,7 @@ class BitFieldTest(TestCase):
 
         cursor = connection.cursor()
         flags_field = BitFieldTestModel._meta.get_field_by_name('flags')[0]
-        flags_db_column = flags_field.db_column or flags_field.name
-        cursor.execute("INSERT INTO %s (%s) VALUES (-1)" % (BitFieldTestModel._meta.db_table, flags_db_column));
+        cursor.execute("INSERT INTO %s (%s) VALUES (-1)" % (BitFieldTestModel._meta.db_table, flags_field.column))
         # There should only be the one row we inserted through the cursor.
         instance = BitFieldTestModel.objects.get(flags=-1)
         self.assertTrue(instance.flags.FLAG_0)
