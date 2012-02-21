@@ -29,7 +29,7 @@ class BitFormField(IntegerField):
     accepts them).
     """
     def __init__(self, choices=(), widget=BitFieldCheckboxSelectMultiple, *args, **kwargs):
-        super(BitFormField, self).__init__(*args, **kwargs)
+        super(BitFormField, self).__init__(widget=widget, *args, **kwargs)
         self.choices = choices
 
     def clean(self, value):

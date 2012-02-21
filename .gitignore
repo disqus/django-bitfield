@@ -2,3 +2,5 @@
 build/
 *.egg-info
 dist/
+*.swp
+*.un~
