@@ -28,3 +28,10 @@ class CompositeBitFieldTestModel(models.Model):
         'flags_2',
     ))
 
+class BitFieldNullDefaultModel(models.Model):
+    flags = BitField(flags=(
+        'FLAG_0',
+        'FLAG_1',
+        'FLAG_2',
+        'FLAG_3',
+    ), null=True, default=None, db_column='another_default_null_name')
