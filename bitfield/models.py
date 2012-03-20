@@ -57,7 +57,8 @@ class BitFieldCreator(Creator):
         if obj is None:
             return BitFieldFlags(self.field.flags)
         retval = obj.__dict__[self.field.name]
-        if self.field.__class__ is BitField:
+        # handle case where value of field is None
+        if not retval is None and self.field.__class__ is BitField:
             # Update flags from class in case they've changed.
             retval._keys = self.field.flags
         return retval
@@ -106,7 +107,11 @@ class BitField(BigIntegerField):
     def get_prep_value(self, value):
         if isinstance(value, (BitHandler, Bit)):
             value = value.mask
-        return int(value)
+        # handle case where value is None
+        if value is not None:
+            return int(value)
+        else:
+            return value
 
     # def get_db_prep_save(self, value, connection):
     #     if isinstance(value, Bit):
@@ -133,7 +138,10 @@ class BitField(BigIntegerField):
     def to_python(self, value):
         if isinstance(value, Bit):
             value = value.mask
-        if not isinstance(value, BitHandler):
+        # handle case where value is None
+        if value is None:
+            pass
+        elif not isinstance(value, BitHandler):
             # Regression for #1425: fix bad data that was created resulting
             # in negative values for flags.  Compute the value that would
             # have been visible ot the application to preserve compatibility.

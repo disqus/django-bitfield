@@ -3,7 +3,7 @@ from django.db.models import F
 from django.test import TestCase
 
 from bitfield import BitHandler, Bit
-from bitfield.tests import BitFieldTestModel, CompositeBitFieldTestModel
+from bitfield.tests import BitFieldTestModel, CompositeBitFieldTestModel, BitFieldNullDefaultModel
 
 class BitHandlerTest(TestCase):
     def test_defaults(self):
@@ -288,4 +288,32 @@ class CompositeBitFieldTest(TestCase):
             hasattr(inst.flags_1, 'flag_0'))
         self.assertEqual(hasattr(inst.flags, 'flag_4'),
             hasattr(inst.flags_2, 'flag_4'))
+
+class NullDefaultBitfieldTest(TestCase):
+    """Null values for bitfields used to not work. This test checks to make sure they do work
+       now and don't break other non-null cases."""
+    def test_create_default_null(self):
+        inst = BitFieldNullDefaultModel()
+        # flags should be None (null) by default
+        self.assertIsNone(inst.flags)
+        inst.save()
+        # make sure still None (null) after save
+        self.assertIsNone(inst.flags)
+        inst = BitFieldNullDefaultModel.objects.get(pk=inst.pk)
+        # make sure still None (null) after being loaded back in
+        self.assertIsNone(inst.flags)
+        # make sure we can still set the flags
+        inst.flags = 1
+        self.assertEqual(type(inst.flags),BitHandler)
+        inst.save()
+        inst = BitFieldNullDefaultModel.objects.get(pk=inst.pk)
+        self.assertEqual(type(inst.flags),BitHandler)
+        self.assertTrue(inst.flags.FLAG_0.is_set)
+        # and that we haven't broken things
+        self.assertFalse(inst.flags.FLAG_1.is_set)
+        inst.save()
+        inst = BitFieldNullDefaultModel.objects.get(pk=inst.pk)
+        self.assertEqual(type(inst.flags),BitHandler)
+        self.assertTrue(inst.flags.FLAG_0.is_set)
+        self.assertFalse(inst.flags.FLAG_1.is_set)
 
