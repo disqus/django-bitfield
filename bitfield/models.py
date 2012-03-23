@@ -97,7 +97,8 @@ class BitField(BigIntegerField):
         return (field_class, args, kwargs)
 
     def formfield(self, form_class=BitFormField, **kwargs):
-        return Field.formfield(self, form_class, **kwargs)
+        choices = [(f, f) for f in self.flags]
+        return Field.formfield(self, form_class, choices=choices, **kwargs)
 
     def pre_save(self, instance, add):
         value = getattr(instance, self.attname)
