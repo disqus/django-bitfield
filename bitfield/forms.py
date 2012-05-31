@@ -1,4 +1,4 @@
-from django.forms import CheckboxSelectMultiple, IntegerField
+from django.forms import CheckboxSelectMultiple, IntegerField, ValidationError
 from django.utils.encoding import force_unicode
 
 from .types import BitHandler
@@ -29,14 +29,17 @@ class BitFormField(IntegerField):
     accepts them).
     """
     def __init__(self, choices=(), widget=BitFieldCheckboxSelectMultiple, *args, **kwargs):
-        super(BitFormField, self).__init__(widget=widget, *args, **kwargs)
-        self.choices = choices
+        self.widget = widget
+        super(BitFormField, self).__init__(*args, **kwargs)
+        self.choices = self.widget.choices = choices
 
     def clean(self, value):
         if not value:
             return 0
-
-        result = BitHandler(0, self.choices)
+        result = BitHandler(0, list(k for k,v in self.choices))
         for k in value:
-            setattr(result, k, True)
+            try:
+                setattr(result, str(k), True)
+            except AttributeError:
+                raise ValidationError('Unknown choice')
         return int(result)
