@@ -7,9 +7,11 @@ from django.conf import settings
 if not settings.configured:
     settings.configure(
         DATABASES={
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'bitfield_test',
-            'USER': 'postgres',
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'NAME': 'bitfield_test',
+                'USER': 'postgres',
+            }
         },
         INSTALLED_APPS=[
             'django.contrib.contenttypes',
