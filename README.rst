@@ -1,6 +1,8 @@
 django-bitfield
 ---------------
 
+.. image:: https://secure.travis-ci.org/ahref/django-bitfield.png?branch=master
+
 Provides a BitField like class (using a BigIntegerField) for your Django models.
 
 (If you're upgrading from a version before 1.2 the API has changed greatly and is backwards incompatible!)
@@ -62,3 +64,18 @@ Now you can use the field using very familiar Django operations::
 	    print f
 
 Enjoy!
+
+Admin
+=====
+
+To use the widget in the admin, you'll need to update your ModelAdmin. Add the
+following lines to your ModelAdmin::
+
+	formfield_overrides = {
+		BitField: {'widget': BitFieldCheckboxSelectMultiple},
+	}
+
+Make sure you've imported the classes by adding these lines to the top of the file::
+
+	from bitfield import BitField
+	from bitfield.forms import BitFieldCheckboxSelectMultiple

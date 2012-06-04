@@ -1,7 +1,12 @@
 from django.db.models import signals
 from django.db.models.sql.expressions import SQLEvaluator
 from django.db.models.fields import Field, BigIntegerField
-from django.db.models.fields.subclassing import Creator, LegacyConnection
+from django.db.models.fields.subclassing import Creator
+try:
+    from django.db.models.fields.subclassing import SubfieldBase
+except ImportError:
+    # django 1.2
+    from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase
 
 from .forms import BitFormField
 from .query import BitQueryLookupWrapper
@@ -63,7 +68,7 @@ class BitFieldCreator(Creator):
         return retval
 
 
-class BitFieldMeta(LegacyConnection):
+class BitFieldMeta(SubfieldBase):
     """
     Modified SubFieldBase to use our contribute_to_class method (instead of
     monkey-patching make_contrib).  This uses our BitFieldCreator descriptor
@@ -97,7 +102,8 @@ class BitField(BigIntegerField):
         return (field_class, args, kwargs)
 
     def formfield(self, form_class=BitFormField, **kwargs):
-        return Field.formfield(self, form_class, **kwargs)
+        choices = [(f, f) for f in self.flags]
+        return Field.formfield(self, form_class, choices=choices, **kwargs)
 
     def pre_save(self, instance, add):
         value = getattr(instance, self.attname)

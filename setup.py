@@ -12,7 +12,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'Django>=1.2,<1.4',
+        'Django>=1.2',
     ],
     setup_requires=[
         'nose>=1.0',
