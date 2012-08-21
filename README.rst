@@ -79,3 +79,14 @@ Make sure you've imported the classes by adding these lines to the top of the fi
 
 	from bitfield import BitField
 	from bitfield.forms import BitFieldCheckboxSelectMultiple
+
+There is also a ``BitFieldListFilter`` list filter (Django 1.4 or newer).
+To use it set ``list_filter`` ModelAdmin option::
+
+    list_filter = (
+            ('flags', BitFieldListFilter,)
+            )
+
+BitFieldListFilter is in ``bitfield.admin`` module::
+
+    from bitfield.admin import BitFieldListFilter
