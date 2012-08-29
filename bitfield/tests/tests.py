@@ -255,6 +255,29 @@ class BitFieldTest(TestCase):
 
         self.assertRaises(ValueError, BitField, flags=flags[:(MAX_COUNT + 1)])
 
+    def test_dictionary_init(self):
+        flags = {
+            0: 'zero',
+            1: 'first',
+            10: 'tenth',
+            2: 'second',
+
+            'wrongkey': 'wrongkey',
+            100: 'bigkey',
+            -100: 'smallkey',
+        }
+
+        try:
+            bf = BitField(flags)
+        except ValueError:
+            self.fail("It should work well with these flags")
+
+        self.assertEquals(bf.flags, ['zero', 'first', 'second', '', '', '', '', '', '', '', 'tenth'])
+        self.assertRaises(ValueError, BitField, flags={})
+        self.assertRaises(ValueError, BitField, flags={'wrongkey': 'wrongkey'})
+        self.assertRaises(ValueError, BitField, flags={'1': 'non_int_key'})
+
+
 class BitFieldSerializationTest(TestCase):
     def test_adding_flags(self):
         import pickle

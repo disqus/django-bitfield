@@ -96,6 +96,14 @@ class BitField(BigIntegerField):
     __metaclass__ = BitFieldMeta
 
     def __init__(self, flags, *args, **kwargs):
+        if isinstance(flags, dict):
+            # Get only integer keys in correct range
+            valid_keys = (k for k in flags.keys() if isinstance(k, int) and (0 <= k < MAX_FLAG_COUNT))
+            if not valid_keys:
+                raise ValueError('Wrong keys or empty dictionary')
+            # Fill list with values from dict or with empty values
+            flags = [flags.get(i, '') for i in range(max(valid_keys) + 1)]
+
         if len(flags) > MAX_FLAG_COUNT:
             raise ValueError('Too many flags')
 
