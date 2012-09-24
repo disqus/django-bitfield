@@ -37,10 +37,13 @@ class BitFormField(IntegerField):
         if not value:
             return 0
 
-        result = BitHandler(0, [k for k, v in self.choices])
-        for k in value:
-            try:
-                setattr(result, str(k), True)
-            except AttributeError:
-                raise ValidationError('Unknown choice')
+        if isinstance(value, int):
+            result = BitHandler(value, [k for k, v in self.choices])
+        else:
+            result = BitHandler(0, [k for k, v in self.choices])
+            for k in value:
+                try:
+                    setattr(result, str(k), True)
+                except AttributeError:
+                    raise ValidationError('Unknown choice')
         return int(result)
