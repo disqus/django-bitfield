@@ -5,6 +5,7 @@ from django.test import TestCase
 from bitfield import BitHandler, Bit, BitField
 from bitfield.tests import BitFieldTestModel, CompositeBitFieldTestModel, BitFieldTestModelForm
 
+
 class BitHandlerTest(TestCase):
     def test_defaults(self):
         bithandler = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
@@ -78,6 +79,7 @@ class BitHandlerTest(TestCase):
         self.assertEquals(bithandler.FLAG_1, True)
         self.assertEquals(bithandler.FLAG_2, False)
 
+
 class BitTest(TestCase):
     def test_int(self):
         bit = Bit(0)
@@ -120,6 +122,7 @@ class BitTest(TestCase):
         self.assertEquals(Bit(0) ^ Bit(5), 33)
         self.assertEquals(Bit(0) ^ ~Bit(2), -6)
 
+
 class BitFieldTest(TestCase):
     def test_basic(self):
         # Create instance and make sure flags are working properly.
@@ -141,7 +144,7 @@ class BitFieldTest(TestCase):
         cursor = connection.cursor()
         flags_field = BitFieldTestModel._meta.get_field_by_name('flags')[0]
         flags_db_column = flags_field.db_column or flags_field.name
-        cursor.execute("INSERT INTO %s (%s) VALUES (-1)" % (BitFieldTestModel._meta.db_table, flags_db_column));
+        cursor.execute("INSERT INTO %s (%s) VALUES (-1)" % (BitFieldTestModel._meta.db_table, flags_db_column))
         # There should only be the one row we inserted through the cursor.
         instance = BitFieldTestModel.objects.get(flags=-1)
         self.assertTrue(instance.flags.FLAG_0)
@@ -190,40 +193,6 @@ class BitFieldTest(TestCase):
         BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') | instance.flags)
         instance = BitFieldTestModel.objects.get(pk=instance.pk)
         self.assertTrue(instance.flags.FLAG_1)
-
-        # BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') | ((~BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_3)))
-        # instance = BitFieldTestModel.objects.get(pk=instance.pk)
-        # self.assertFalse(instance.flags.FLAG_0)
-        # self.assertTrue(instance.flags.FLAG_1)
-        # self.assertTrue(instance.flags.FLAG_3)
-        # self.assertFalse(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
-
-        # BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags') & ~BitFieldTestModel.flags.FLAG_3)
-        # instance = BitFieldTestModel.objects.get(pk=instance.pk)
-        # self.assertFalse(instance.flags.FLAG_0)
-        # self.assertTrue(instance.flags.FLAG_1)
-        # self.assertFalse(instance.flags.FLAG_3)
-
-    # def test_save(self):
-    #     instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0)
-    #     self.assertTrue(instance.flags.FLAG_0)
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=1).exists())
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
-    #     instance.delete()
-    #
-    #     instance = BitFieldTestModel.objects.create(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1))
-    #     self.assertTrue(instance.flags.FLAG_0)
-    #     self.assertTrue(instance.flags.FLAG_1)
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=3).exists())
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_1).exists())
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)).exists())
-    #     instance.delete()
-    #
-    #     instance = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_3)
-    #     self.assertTrue(instance.flags.FLAG_3)
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=8).exists())
-    #     self.assertTrue(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_3).exists())
 
     def test_negate(self):
         BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)
@@ -292,6 +261,7 @@ class BitFieldSerializationTest(TestCase):
         forum.flags.FLAG_0
         self.assertFalse(inst.flags.FLAG_0)
 
+
 class CompositeBitFieldTest(TestCase):
     def test_get_flag(self):
         inst = CompositeBitFieldTestModel()
@@ -327,6 +297,7 @@ class CompositeBitFieldTest(TestCase):
             hasattr(inst.flags_1, 'flag_0'))
         self.assertEqual(hasattr(inst.flags, 'flag_4'),
             hasattr(inst.flags_2, 'flag_4'))
+
 
 class BitFormFieldTest(TestCase):
     def test_form_new_invalid(self):
