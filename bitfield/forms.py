@@ -6,7 +6,7 @@ from .types import BitHandler
 
 class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
     def render(self, name, value, attrs=None, choices=()):
-        if type(value) is BitHandler:
+        if isinstance(value, BitHandler):
             value = [k for k, v in value if v]
         return super(BitFieldCheckboxSelectMultiple, self).render(
           name, value, attrs=attrs, choices=enumerate(choices))
@@ -30,13 +30,14 @@ class BitFormField(IntegerField):
     """
     def __init__(self, choices=(), widget=BitFieldCheckboxSelectMultiple, *args, **kwargs):
         self.widget = widget
-        super(BitFormField, self).__init__(*args, **kwargs)
         self.choices = self.widget.choices = choices
+        super(BitFormField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
         if not value:
             return 0
-        result = BitHandler(0, list(k for k,v in self.choices))
+
+        result = BitHandler(0, [k for k, v in self.choices])
         for k in value:
             try:
                 setattr(result, str(k), True)
