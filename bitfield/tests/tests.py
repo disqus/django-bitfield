@@ -2,7 +2,7 @@ from django.db import connection
 from django.db.models import F
 from django.test import TestCase
 
-from bitfield import BitHandler, Bit
+from bitfield import BitHandler, Bit, BitField
 from bitfield.tests import BitFieldTestModel, CompositeBitFieldTestModel, BitFieldTestModelForm
 
 class BitHandlerTest(TestCase):
@@ -239,6 +239,45 @@ class BitFieldTest(TestCase):
         self.assertFalse(instance.flags.FLAG_2)
         self.assertFalse(instance.flags.FLAG_3)
 
+    def test_binary_capacity(self):
+        import math
+        from django.db.models.fields import BigIntegerField
+        # Local maximum value, slow canonical algorithm
+        MAX_COUNT = int(math.floor(math.log(BigIntegerField.MAX_BIGINT, 2)))
+
+        # Big flags list
+        flags = ['f' + str(i) for i in range(100)]
+
+        try:
+            BitField(flags=flags[:MAX_COUNT])
+        except ValueError:
+            self.fail("It should work well with these flags")
+
+        self.assertRaises(ValueError, BitField, flags=flags[:(MAX_COUNT + 1)])
+
+    def test_dictionary_init(self):
+        flags = {
+            0: 'zero',
+            1: 'first',
+            10: 'tenth',
+            2: 'second',
+
+            'wrongkey': 'wrongkey',
+            100: 'bigkey',
+            -100: 'smallkey',
+        }
+
+        try:
+            bf = BitField(flags)
+        except ValueError:
+            self.fail("It should work well with these flags")
+
+        self.assertEquals(bf.flags, ['zero', 'first', 'second', '', '', '', '', '', '', '', 'tenth'])
+        self.assertRaises(ValueError, BitField, flags={})
+        self.assertRaises(ValueError, BitField, flags={'wrongkey': 'wrongkey'})
+        self.assertRaises(ValueError, BitField, flags={'1': 'non_int_key'})
+
+
 class BitFieldSerializationTest(TestCase):
     def test_adding_flags(self):
         import pickle
@@ -326,14 +365,14 @@ class BitFormFieldTest(TestCase):
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertEquals(bool(getattr(instance.flags, k)), k in data['flags'])
-        
+
         data = {'flags': ['FLAG_2', 'FLAG_3']}
         form = BitFieldTestModelForm(data=data, instance=instance)
         self.failUnless(form.is_valid())
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertEquals(bool(getattr(instance.flags, k)), k in data['flags'])
-        
+
         data = {'flags': []}
         form = BitFieldTestModelForm(data=data, instance=instance)
         self.failUnless(form.is_valid())

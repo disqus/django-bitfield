@@ -12,9 +12,14 @@ from .forms import BitFormField
 from .query import BitQueryLookupWrapper
 from .types import BitHandler, Bit
 
+# Count binary capacity. Truncate "0b" prefix from binary form.
+# Twice faster than bin(i)[2:] or math.floor(math.log(i))
+MAX_FLAG_COUNT = int(len(bin(BigIntegerField.MAX_BIGINT)) - 2)
 
 class BitFieldFlags(object):
     def __init__(self, flags):
+        if len(flags) > MAX_FLAG_COUNT:
+            raise ValueError('Too many flags')
         self._flags = flags
 
     def __repr__(self):
@@ -91,6 +96,17 @@ class BitField(BigIntegerField):
     __metaclass__ = BitFieldMeta
 
     def __init__(self, flags, *args, **kwargs):
+        if isinstance(flags, dict):
+            # Get only integer keys in correct range
+            valid_keys = (k for k in flags.keys() if isinstance(k, int) and (0 <= k < MAX_FLAG_COUNT))
+            if not valid_keys:
+                raise ValueError('Wrong keys or empty dictionary')
+            # Fill list with values from dict or with empty values
+            flags = [flags.get(i, '') for i in range(max(valid_keys) + 1)]
+
+        if len(flags) > MAX_FLAG_COUNT:
+            raise ValueError('Too many flags')
+
         BigIntegerField.__init__(self, *args, **kwargs)
         self.flags = flags
 
