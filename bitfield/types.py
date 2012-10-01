@@ -7,7 +7,7 @@ class Bit(object):
     def __init__(self, number, is_set=True):
         self.number = number
         self.is_set = bool(is_set)
-        self.mask = 2**int(number)
+        self.mask = 2 ** int(number)
         if not self.is_set:
             self.mask = ~self.mask
 
@@ -188,11 +188,11 @@ class BitHandler(object):
         return self.mask, []
 
     def get_bit(self, bit_number):
-        mask = 2**int(bit_number)
+        mask = 2 ** int(bit_number)
         return Bit(bit_number, self._value & mask != 0)
 
     def set_bit(self, bit_number, true_or_false):
-        mask = 2**int(bit_number)
+        mask = 2 ** int(bit_number)
         if true_or_false:
             self._value |= mask
         else:
