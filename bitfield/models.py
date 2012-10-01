@@ -172,6 +172,40 @@ class BitField(BigIntegerField):
         return value
 
 
+class CompositeBitFieldWrapper(object):
+    def __init__(self, fields):
+        self.fields = fields
+
+    def __getattr__(self, attr):
+        if attr == 'fields':
+            return super(CompositeBitFieldWrapper, self).__getattr__(attr)
+
+        for field in self.fields:
+            if hasattr(field, attr):
+                return getattr(field, attr)
+        raise AttributeError('%s is not a valid flag' % attr)
+
+    def __hasattr__(self, attr):
+        if attr == 'fields':
+            return super(CompositeBitFieldWrapper, self).__hasattr__(attr)
+
+        for field in self.fields:
+            if hasattr(field, attr):
+                return True
+        return False
+
+    def __setattr__(self, attr, value):
+        if attr == 'fields':
+            super(CompositeBitFieldWrapper, self).__setattr__(attr, value)
+            return
+
+        for field in self.fields:
+            if hasattr(field, attr):
+                setattr(field, attr, value)
+                return
+        raise AttributeError('%s is not a valid flag' % attr)
+
+
 class CompositeBitField(object):
     def __init__(self, fields):
         self.fields = fields
@@ -194,38 +228,6 @@ class CompositeBitField(object):
             raise ValueError('BitField flags must be unique.')
 
     def __get__(self, instance, instance_type=None):
-        class CompositeBitFieldWrapper(object):
-            def __init__(self, fields):
-                self.fields = fields
-
-            def __getattr__(self, attr):
-                if attr == 'fields':
-                    return super(CompositeBitFieldWrapper, self).__getattr__(attr)
-
-                for field in self.fields:
-                    if hasattr(field, attr):
-                        return getattr(field, attr)
-                raise AttributeError('%s is not a valid flag' % attr)
-
-            def __hasattr__(self, attr):
-                if attr == 'fields':
-                    return super(CompositeBitFieldWrapper, self).__hasattr__(attr)
-
-                for field in self.fields:
-                    if hasattr(field, attr):
-                        return True
-                return False
-
-            def __setattr__(self, attr, value):
-                if attr == 'fields':
-                    super(CompositeBitFieldWrapper, self).__setattr__(attr, value)
-                    return
-
-                for field in self.fields:
-                    if hasattr(field, attr):
-                        setattr(field, attr, value)
-                        return
-                raise AttributeError('%s is not a valid flag' % attr)
         fields = [getattr(instance, f) for f in self.fields]
         return CompositeBitFieldWrapper(fields)
 
