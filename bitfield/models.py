@@ -16,6 +16,7 @@ from .types import BitHandler, Bit
 # Twice faster than bin(i)[2:] or math.floor(math.log(i))
 MAX_FLAG_COUNT = int(len(bin(BigIntegerField.MAX_BIGINT)) - 2)
 
+
 class BitFieldFlags(object):
     def __init__(self, flags):
         if len(flags) > MAX_FLAG_COUNT:
@@ -161,7 +162,7 @@ class BitField(BigIntegerField):
             if isinstance(value, (int, long)) and value < 0:
                 new_value = 0
                 for bit_number, _ in enumerate(self.flags):
-                    new_value |= (value & (2**bit_number))
+                    new_value |= (value & (2 ** bit_number))
                 value = new_value
 
             value = BitHandler(value, self.flags)
@@ -230,4 +231,3 @@ class CompositeBitField(object):
 
     def __set__(self, *args, **kwargs):
         raise NotImplementedError('CompositeBitField cannot be set.')
-
