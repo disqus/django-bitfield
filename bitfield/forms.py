@@ -42,5 +42,5 @@ class BitFormField(IntegerField):
             try:
                 setattr(result, str(k), True)
             except AttributeError:
-                raise ValidationError('Unknown choice')
+                raise ValidationError('Unknown choice: %r' % k)
         return int(result)
