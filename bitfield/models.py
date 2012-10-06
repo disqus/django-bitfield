@@ -8,9 +8,9 @@ except ImportError:
     # django 1.2
     from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase
 
-from .forms import BitFormField
-from .query import BitQueryLookupWrapper
-from .types import BitHandler, Bit
+from bitfield.forms import BitFormField
+from bitfield.query import BitQueryLookupWrapper
+from bitfield.types import BitHandler, Bit
 
 # Count binary capacity. Truncate "0b" prefix from binary form.
 # Twice faster than bin(i)[2:] or math.floor(math.log(i))

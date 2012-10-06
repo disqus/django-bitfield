@@ -1,5 +1,3 @@
-
-
 class Bit(object):
     """
     Represents a single Bit.
