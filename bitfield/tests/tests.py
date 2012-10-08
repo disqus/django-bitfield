@@ -257,6 +257,13 @@ class BitFieldSerializationTest(TestCase):
         self.assertTrue(inst.flags.FLAG_0)
         self.assertFalse(inst.flags.FLAG_1)
 
+    def test_pickle_integration(self):
+        inst = BitFieldTestModel.objects.create(flags=1)
+        data = pickle.dumps(inst)
+        inst = pickle.loads(data)
+        self.assertEquals(type(inst.flags), BitHandler)
+        self.assertEquals(int(inst.flags), 1)
+
 
 class CompositeBitFieldTest(TestCase):
     def test_get_flag(self):
