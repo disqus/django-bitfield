@@ -264,6 +264,12 @@ class BitFieldSerializationTest(TestCase):
         self.assertEquals(type(inst.flags), BitHandler)
         self.assertEquals(int(inst.flags), 1)
 
+    def test_added_field(self):
+        data = "cdjango.db.models.base\nmodel_unpickle\np0\n(cbitfield.tests.models\nBitFieldTestModel\np1\n(lp2\ncdjango.db.models.base\nsimple_class_factory\np3\ntp4\nRp5\n(dp6\nS'flags'\np7\nccopy_reg\n_reconstructor\np8\n(cbitfield.types\nBitHandler\np9\nc__builtin__\nobject\np10\nNtp11\nRp12\n(dp13\nS'_value'\np14\nI1\nsS'_keys'\np15\n(S'FLAG_0'\np16\nS'FLAG_1'\np17\nS'FLAG_2'\np18\ntp19\nsbsS'_state'\np20\ng8\n(cdjango.db.models.base\nModelState\np21\ng10\nNtp22\nRp23\n(dp24\nS'adding'\np25\nI00\nsS'db'\np27\nS'default'\np27\nsbsS'id'\np28\nI1\nsb."
+
+        inst = pickle.loads(data)
+        self.assertTrue('FLAG_3' in inst.flags.keys())
+
 
 class CompositeBitFieldTest(TestCase):
     def test_get_flag(self):
