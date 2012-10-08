@@ -1,3 +1,5 @@
+import pickle
+
 from django.db import connection
 from django.db.models import F
 from django.test import TestCase
@@ -248,18 +250,12 @@ class BitFieldTest(TestCase):
 
 
 class BitFieldSerializationTest(TestCase):
-    def test_adding_flags(self):
-        import pickle
+    def test_can_unserialize_bithandler(self):
+        data = "cdjango.db.models.base\nmodel_unpickle\np0\n(cbitfield.tests.models\nBitFieldTestModel\np1\n(lp2\ncdjango.db.models.base\nsimple_class_factory\np3\ntp4\nRp5\n(dp6\nS'flags'\np7\nccopy_reg\n_reconstructor\np8\n(cbitfield.types\nBitHandler\np9\nc__builtin__\nobject\np10\nNtp11\nRp12\n(dp13\nS'_value'\np14\nI1\nsS'_keys'\np15\n(S'FLAG_0'\np16\nS'FLAG_1'\np17\nS'FLAG_2'\np18\nS'FLAG_3'\np19\ntp20\nsbsS'_state'\np21\ng8\n(cdjango.db.models.base\nModelState\np22\ng10\nNtp23\nRp24\n(dp25\nS'adding'\np26\nI00\nsS'db'\np27\nS'default'\np28\nsbsS'id'\np29\nI1\nsb."
 
-        inst = BitFieldTestModel.objects.create(flags=0)
-        data = pickle.dumps(inst)
-
-        # ensure the flag is actually working
-        self.assertFalse(inst.flags.FLAG_0)
-
-        forum = pickle.loads(data)
-        forum.flags.FLAG_0
-        self.assertFalse(inst.flags.FLAG_0)
+        inst = pickle.loads(data)
+        self.assertTrue(inst.flags.FLAG_0)
+        self.assertFalse(inst.flags.FLAG_1)
 
 
 class CompositeBitFieldTest(TestCase):
