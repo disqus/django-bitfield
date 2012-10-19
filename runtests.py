@@ -1,18 +1,23 @@
 #!/usr/bin/env python
+import os
 import sys
 from optparse import OptionParser
 
 from django.conf import settings
 
 if not settings.configured:
+    DATABASES={
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'bitfield_test',
+            'USER': 'postgres',
+        }
+    }
+    if 'PGHOST' in os.environ:
+        DATABASES['default']['HOST'] = os.environ['PGHOST']
+
     settings.configure(
-        DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                'NAME': 'bitfield_test',
-                'USER': 'postgres',
-            }
-        },
+        DATABASES=DATABASES,
         INSTALLED_APPS=[
             'django.contrib.contenttypes',
             'bitfield',

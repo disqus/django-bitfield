@@ -35,6 +35,9 @@ class Bit(object):
     def __ne__(self, value):
         return not self == value
 
+    def __hash__(self):
+        return hash((self.number, self.is_set))
+
     def __coerce__(self, value):
         return (self.is_set, bool(value))
 

@@ -83,6 +83,12 @@ class BitHandlerTest(TestCase):
 
 
 class BitTest(TestCase):
+    def assertHashEqual(self, first, second):
+        self.assertEqual(*map(hash, (first, second)))
+
+    def assertHashNotEqual(self, first, second):
+        self.assertNotEqual(*map(hash, (first, second)))
+
     def test_int(self):
         bit = Bit(0)
         self.assertEquals(int(bit), 1)
@@ -95,6 +101,19 @@ class BitTest(TestCase):
         self.assertNotEquals(Bit(0, 0), Bit(0, 1))
         self.assertEquals(Bit(0, 1), Bit(0, 1))
         self.assertEquals(Bit(0), 1)
+
+    def test_hash_comparison(self):
+        self.assertHashEqual(Bit(0), Bit(0))
+        self.assertHashNotEqual(Bit(0), Bit(1))
+        self.assertHashEqual(Bit(0, False), Bit(0, False))
+        self.assertHashEqual(Bit(1), Bit(1))
+
+        d = {
+            Bit(0): True,
+            Bit(1): False,
+        }
+        self.assertEqual(d[Bit(0)], True)
+        self.assertEqual(d[Bit(1)], False)
 
     def test_and(self):
         self.assertEquals(1 & Bit(2), 0)
