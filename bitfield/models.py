@@ -107,9 +107,19 @@ class BitField(BigIntegerField):
 
         if len(flags) > MAX_FLAG_COUNT:
             raise ValueError('Too many flags')
+        
+        flags = list(flags)
+        labels = []
+        for num, flag in enumerate(flags):
+            if isinstance(flag, (tuple, list)):
+                flags[num] = flag[0]
+                labels.append(flag[1])
+            else:
+                labels.append(flag)
 
         BigIntegerField.__init__(self, *args, **kwargs)
         self.flags = flags
+        self.labels = labels
 
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
@@ -119,7 +129,8 @@ class BitField(BigIntegerField):
         return (field_class, args, kwargs)
 
     def formfield(self, form_class=BitFormField, **kwargs):
-        return Field.formfield(self, form_class, choices=[(k, k) for k in self.flags], **kwargs)
+        choices = [(k, self.labels[self.flags.index(k)]) for k in self.flags]
+        return Field.formfield(self, form_class, choices=choices, **kwargs)
 
     def pre_save(self, instance, add):
         value = getattr(instance, self.attname)
@@ -165,7 +176,7 @@ class BitField(BigIntegerField):
                     new_value |= (value & (2 ** bit_number))
                 value = new_value
 
-            value = BitHandler(value, self.flags)
+            value = BitHandler(value, self.flags, self.labels)
         else:
             # Ensure flags are consistent for unpickling
             value._keys = self.flags
