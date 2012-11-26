@@ -1,5 +1,8 @@
+from django.db.models import F
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import FieldListFilter
+from django.contrib.admin.options import IncorrectLookupParameters
 
 from bitfield import Bit
 
@@ -15,6 +18,13 @@ class BitFieldListFilter(FieldListFilter):
         self.flags = field.flags
         super(BitFieldListFilter, self).__init__(field,
             request, params, model, model_admin, field_path)
+
+    def queryset(self, request, queryset):
+        filter = dict((p, F(p) | v) for p, v in self.used_parameters.iteritems())
+        try:
+            return queryset.filter(**filter)
+        except ValidationError, e:
+            raise IncorrectLookupParameters(e)
 
     def expected_parameters(self):
         return [self.lookup_kwarg]
