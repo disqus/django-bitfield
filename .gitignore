@@ -1,6 +1,8 @@
 *.pyc
-build/
-*.egg-info
-dist/
 *.swp
 *.un~
+*.egg-info
+*.egg/dist/
+build/
+dist/
+.tox/
