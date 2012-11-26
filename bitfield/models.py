@@ -6,7 +6,7 @@ try:
     from django.db.models.fields.subclassing import SubfieldBase
 except ImportError:
     # django 1.2
-    from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase
+    from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase  # NOQA
 
 from bitfield.forms import BitFormField
 from bitfield.query import BitQueryLookupWrapper
@@ -96,7 +96,7 @@ class BitFieldMeta(SubfieldBase):
 class BitField(BigIntegerField):
     __metaclass__ = BitFieldMeta
 
-    def __init__(self, flags, *args, **kwargs):
+    def __init__(self, flags, default=None, *args, **kwargs):
         if isinstance(flags, dict):
             # Get only integer keys in correct range
             valid_keys = (k for k in flags.keys() if isinstance(k, int) and (0 <= k < MAX_FLAG_COUNT))
@@ -108,7 +108,13 @@ class BitField(BigIntegerField):
         if len(flags) > MAX_FLAG_COUNT:
             raise ValueError('Too many flags')
 
-        BigIntegerField.__init__(self, *args, **kwargs)
+        if isinstance(default, (list, tuple, set, frozenset)):
+            new_value = 0
+            for flag in default:
+                new_value |= Bit(flags.index(flag))
+            default = new_value
+
+        BigIntegerField.__init__(self, default=default, *args, **kwargs)
         self.flags = flags
 
     def south_field_triple(self):
