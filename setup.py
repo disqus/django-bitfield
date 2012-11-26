@@ -18,8 +18,8 @@ setup(
         'nose>=1.0',
     ],
     tests_require=[
-        'django-nose==0.1.3',
-        'psycopg2==2.3',
+        'django-nose>=0.1.3',
+        'psycopg2>=2.3',
     ],
     test_suite='runtests.runtests',
     include_package_data=True,

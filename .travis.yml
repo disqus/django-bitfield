@@ -12,7 +12,9 @@ env:
 before_script:
   - psql -c 'create database bitfield_test;' -U postgres
 
-install: python setup.py develop
+install:
+  - pip install Django==$DJANGO --use-mirrors
+  - pip install -e . --use-mirrors
 
 script: python setup.py test
 
