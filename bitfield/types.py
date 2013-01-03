@@ -94,9 +94,6 @@ class Bit(object):
     def __sentry__(self):
         return repr(self)
 
-    def prepare(self, evaluator, query, allow_joins):
-        return self
-
     def evaluate(self, evaluator, qn, connection):
         return self.mask, []
 
@@ -178,9 +175,6 @@ class BitHandler(object):
     def _get_mask(self):
         return self._value
     mask = property(_get_mask)
-
-    def prepare(self, evaluator, query, allow_joins):
-        return self
 
     def evaluate(self, evaluator, qn, connection):
         return self.mask, []
