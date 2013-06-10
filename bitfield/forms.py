@@ -25,6 +25,13 @@ class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
 
 class BitFormField(IntegerField):
     def __init__(self, choices=(), widget=BitFieldCheckboxSelectMultiple, *args, **kwargs):
+       if isinstance(kwargs['initial'],int):
+           iv = kwargs['initial']
+            l = []
+            for i in range(0, 63):
+               if (1<<i) & iv > 0:
+                       l += [choices[i][0]]
+            kwargs['initial'] = l
         self.widget = widget
         super(BitFormField, self).__init__(widget=widget, *args, **kwargs)
         self.choices = self.widget.choices = choices
