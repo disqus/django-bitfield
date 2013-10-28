@@ -16,6 +16,7 @@ class BitFieldListFilter(FieldListFilter):
         self.lookup_kwarg = field_path
         self.lookup_val = int(request.GET.get(self.lookup_kwarg, 0))
         self.flags = field.flags
+        self.labels = field.labels
         super(BitFieldListFilter, self).__init__(field,
             request, params, model, model_admin, field_path)
 
@@ -43,5 +44,5 @@ class BitFieldListFilter(FieldListFilter):
                 'query_string': cl.get_query_string({
                         self.lookup_kwarg: bit_mask,
                     }),
-                'display': flag,
+                'display': self.labels[number],
             }

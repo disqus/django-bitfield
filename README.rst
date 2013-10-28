@@ -35,6 +35,15 @@ First you'll need to attach a BitField to your class. This acts as a BigIntegerF
 	        'baz_bar',
 	    ))
 
+Flags can also be defined with labels::
+
+	class MyModel(models.Model):
+	    flags = BitField(flags=(
+	        ('awesome_flag', 'Awesome Flag!'),
+	        ('flaggy_foo', 'Flaggy Foo'),
+	        ('baz_bar', 'Baz (bar)'),
+	    ))
+
 Now you can use the field using very familiar Django operations::
 
 	# Create the model
@@ -62,6 +71,9 @@ Now you can use the field using very familiar Django operations::
 	# List all flags on the field
 	for f in o.flags:
 	    print f
+
+	# Get a flag label
+	print o.flags.get_label('awesome_flag')
 
 Enjoy!
 

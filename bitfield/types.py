@@ -102,13 +102,14 @@ class BitHandler(object):
     """
     Represents an array of bits, each as a ``Bit`` object.
     """
-    def __init__(self, value, keys):
+    def __init__(self, value, keys, labels=None):
         # TODO: change to bitarray?
         if value:
             self._value = int(value)
         else:
             self._value = 0
         self._keys = keys
+        self._labels = labels is not None and labels or keys
 
     def __eq__(self, other):
         if not isinstance(other, BitHandler):
@@ -203,3 +204,10 @@ class BitHandler(object):
     def iteritems(self):
         for k in self._keys:
             yield (k, getattr(self, k).is_set)
+
+    def get_label(self, flag):
+        if isinstance(flag, basestring):
+            flag = self._keys.index(flag)
+        if isinstance(flag, Bit):
+            flag = flag.number
+        return self._labels[flag]
