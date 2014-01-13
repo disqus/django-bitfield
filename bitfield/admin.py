@@ -21,7 +21,7 @@ class BitFieldListFilter(FieldListFilter):
             request, params, model, model_admin, field_path)
 
     def queryset(self, request, queryset):
-        filter = dict((p, F(p) | v) for p, v in self.used_parameters.iteritems())
+        filter = dict((p, F(p).bitor(v)) for p, v in self.used_parameters.iteritems())
         try:
             return queryset.filter(**filter)
         except ValidationError, e:
