@@ -1,6 +1,6 @@
 import pickle
 
-from django.db import connection
+from django.db import connection, models
 from django.db.models import F
 from django.test import TestCase
 
@@ -247,6 +247,17 @@ class BitFieldTest(TestCase):
         self.assertRaises(ValueError, BitField, flags={})
         self.assertRaises(ValueError, BitField, flags={'wrongkey': 'wrongkey'})
         self.assertRaises(ValueError, BitField, flags={'1': 'non_int_key'})
+
+    def test_defaults_as_key_names(self):
+        class TestModel(models.Model):
+            flags = BitField(flags=(
+                'FLAG_0',
+                'FLAG_1',
+                'FLAG_2',
+                'FLAG_3',
+            ), default=('FLAG_1', 'FLAG_2'))
+        field = TestModel._meta.get_field('flags')
+        self.assertEquals(field.default, TestModel.flags.FLAG_1 | TestModel.flags.FLAG_2)
 
 
 class BitFieldSerializationTest(TestCase):

@@ -2,6 +2,7 @@ from django.db import models
 
 from bitfield import BitField, CompositeBitField
 
+
 class BitFieldTestModel(models.Model):
     flags = BitField(flags=(
         'FLAG_0',
@@ -9,6 +10,7 @@ class BitFieldTestModel(models.Model):
         'FLAG_2',
         'FLAG_3',
     ), default=3, db_column='another_name')
+
 
 class CompositeBitFieldTestModel(models.Model):
     flags_1 = BitField(flags=(
@@ -27,4 +29,3 @@ class CompositeBitFieldTestModel(models.Model):
         'flags_1',
         'flags_2',
     ))
-

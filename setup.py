@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-bitfield',
-    version='1.6.3',
+    version='1.6.4',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/django-bitfield',
@@ -18,8 +18,8 @@ setup(
         'nose>=1.0',
     ],
     tests_require=[
-        'django-nose==0.1.3',
-        'psycopg2==2.3',
+        'django-nose>=0.1.3',
+        'psycopg2>=2.3',
     ],
     test_suite='runtests.runtests',
     include_package_data=True,

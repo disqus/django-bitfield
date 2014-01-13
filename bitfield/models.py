@@ -6,7 +6,7 @@ try:
     from django.db.models.fields.subclassing import SubfieldBase
 except ImportError:
     # django 1.2
-    from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase
+    from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase  # NOQA
 
 from bitfield.forms import BitFormField
 from bitfield.query import BitQueryLookupWrapper
@@ -96,7 +96,7 @@ class BitFieldMeta(SubfieldBase):
 class BitField(BigIntegerField):
     __metaclass__ = BitFieldMeta
 
-    def __init__(self, flags, *args, **kwargs):
+    def __init__(self, flags, default=None, *args, **kwargs):
         if isinstance(flags, dict):
             # Get only integer keys in correct range
             valid_keys = (k for k in flags.keys() if isinstance(k, int) and (0 <= k < MAX_FLAG_COUNT))
@@ -107,9 +107,25 @@ class BitField(BigIntegerField):
 
         if len(flags) > MAX_FLAG_COUNT:
             raise ValueError('Too many flags')
+        
+        flags = list(flags)
+        labels = []
+        for num, flag in enumerate(flags):
+            if isinstance(flag, (tuple, list)):
+                flags[num] = flag[0]
+                labels.append(flag[1])
+            else:
+                labels.append(flag)
 
-        BigIntegerField.__init__(self, *args, **kwargs)
+        if isinstance(default, (list, tuple, set, frozenset)):
+            new_value = 0
+            for flag in default:
+                new_value |= Bit(flags.index(flag))
+            default = new_value
+
+        BigIntegerField.__init__(self, default=default, *args, **kwargs)
         self.flags = flags
+        self.labels = labels
 
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
@@ -119,7 +135,8 @@ class BitField(BigIntegerField):
         return (field_class, args, kwargs)
 
     def formfield(self, form_class=BitFormField, **kwargs):
-        return Field.formfield(self, form_class, choices=[(k, k) for k in self.flags], **kwargs)
+        choices = [(k, self.labels[self.flags.index(k)]) for k in self.flags]
+        return Field.formfield(self, form_class, choices=choices, **kwargs)
 
     def pre_save(self, instance, add):
         value = getattr(instance, self.attname)
@@ -165,7 +182,7 @@ class BitField(BigIntegerField):
                     new_value |= (value & (2 ** bit_number))
                 value = new_value
 
-            value = BitHandler(value, self.flags)
+            value = BitHandler(value, self.flags, self.labels)
         else:
             # Ensure flags are consistent for unpickling
             value._keys = self.flags
