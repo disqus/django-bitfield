@@ -30,34 +30,17 @@ class BitFieldWidgetMixin(object):
             pass
         return new_classes
 
-class BitFieldCheckboxSelectMultiple2(forms.CheckboxSelectMultiple):
-    def render(self, name, value, attrs=None, choices=()):
-        if isinstance(value, BitHandler):
-            value = [k for k, v in value if v]
-        return super(BitFieldCheckboxSelectMultiple, self).render(
-          name, value, attrs=attrs, choices=enumerate(choices))
-
-    def _has_changed(self, initial, data):
-        if initial is None:
-            initial = []
-        if data is None:
-            data = []
-        if initial != data:
-            return True
-        initial_set = set([force_unicode(value) for value in initial])
-        data_set = set([force_unicode(value) for value in data])
-        return data_set != initial_set
-
 class BitFieldCheckboxSelectMultiple(BitFieldWidgetMixin, forms.CheckboxSelectMultiple):
 
     def _has_changed(self, initial, data):
+        #this doesn't work right
+        #return False
         if initial is None:
             initial = []
         if data is None:
             data = []
-        if initial != data:
-            return True
-        initial_set = set([force_unicode(value) for value in initial])
+
+        initial_set = set([force_unicode(key) for key, value in initial.items() if value])
         data_set = set([force_unicode(value) for value in data])
         return data_set != initial_set
 
@@ -90,8 +73,6 @@ class BitFieldCheckboxSelectMultiple(BitFieldWidgetMixin, forms.CheckboxSelectMu
             output.append(u'<li><label%s>%s %s</label></li>' % (label_for, rendered_cb, option_label))
         output.append('</ul>')
         return mark_safe('\n'.join(output))
-
-
 
 class BitFieldButton(BitFieldWidgetMixin, forms.CheckboxSelectMultiple):
     def render(self, name, value, attrs=None, choices=()):
