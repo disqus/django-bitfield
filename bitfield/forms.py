@@ -1,4 +1,4 @@
-from django.forms import CheckboxSelectMultiple, IntegerField, ValidationError
+from django.forms import IntegerField, ValidationError
 from django.utils.encoding import force_unicode
 
 from bitfield.types import BitHandler
