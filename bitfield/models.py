@@ -240,7 +240,7 @@ class CompositeBitField(object):
         cls = sender
         model_fields = dict([
             (f.name, f) for f in cls._meta.fields if f.name in self.fields])
-        all_flags = sum([model_fields[f].flags for f in self.fields], ())
+        all_flags = sum([model_fields[f].flags for f in self.fields], [])
         if len(all_flags) != len(set(all_flags)):
             raise ValueError('BitField flags must be unique.')
 
