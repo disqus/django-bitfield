@@ -9,7 +9,7 @@ class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
         if isinstance(value, BitHandler):
             value = [k for k, v in value if v]
         return super(BitFieldCheckboxSelectMultiple, self).render(
-          name, value, attrs=attrs, choices=enumerate(choices))
+            name, value, attrs=attrs, choices=enumerate(choices))
 
     def _has_changed(self, initial, data):
         if initial is None:

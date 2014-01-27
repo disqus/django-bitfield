@@ -9,4 +9,4 @@ try:
 except Exception, e:
     VERSION = 'unknown'
 
-from bitfield.models import Bit, BitHandler, CompositeBitField, BitField
+from bitfield.models import Bit, BitHandler, CompositeBitField, BitField  # noqa
