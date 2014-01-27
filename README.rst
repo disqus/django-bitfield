@@ -1,7 +1,7 @@
 django-bitfield
 ---------------
 
-.. image:: https://secure.travis-ci.org/ahref/django-bitfield.png?branch=master
+.. image:: https://api.travis-ci.org/disqus/django-bitfield.png?branch=master
 
 Provides a BitField like class (using a BigIntegerField) for your Django models.
 
@@ -50,13 +50,13 @@ Now you can use the field using very familiar Django operations::
 	o = MyModel.objects.create(flags=0)
 
 	# Add awesome_flag (does not work in SQLite)
-	MyModel.objects.filter(pk=o.pk).update(flags=F('flags') | MyModel.flags.awesome_flag)
+	MyModel.objects.filter(pk=o.pk).update(flags=F('flags').bitor(MyModel.flags.awesome_flag))
 
 	# Set flags manually to [awesome_flag, flaggy_foo]
 	MyModel.objects.filter(pk=o.pk).update(flags=MyModel.flags.awesome_flag | MyModel.flags.flaggy_foo)
 
 	# Remove awesome_flag (does not work in SQLite)
-	MyModel.objects.filter(pk=o.pk).update(flags=F('flags') & ~MyModel.flags.awesome_flag)
+	MyModel.objects.filter(pk=o.pk).update(flags=F('flags').bitand(~MyModel.flags.awesome_flag))
 
 	# Find by awesome_flag
 	MyModel.objects.filter(flags=MyModel.flags.awesome_flag)
