@@ -3,6 +3,7 @@ __all__ = ('bitand', 'bitor')
 try:
     from django.db.models.expressions import ExpressionNode
     ExpressionNode.BITAND  # noqa
+    del ExpressionNode
 except AttributeError:
     # Django < 1.5
     def bitand(a, b):
