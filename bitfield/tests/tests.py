@@ -24,6 +24,22 @@ else:
     def BITOR(a, b):
         return a.bitor(b)
 
+try:
+    from django.db.models.base import simple_class_factory  # noqa
+except ImportError:
+    # Django 1.5 muffed up the base class which breaks the pickle tests
+    # Note, it's fixed again in 1.6.
+    from django.db.models import base
+    _model_unpickle = base.model_unpickle
+
+    def simple_class_factory(model, attrs):
+        return model
+
+    def model_unpickle(model, attrs, factory):
+        return _model_unpickle(model, attrs)
+    setattr(base, 'simple_class_factory', simple_class_factory)
+    setattr(base, 'model_unpickle', model_unpickle)
+
 
 class BitHandlerTest(TestCase):
     def test_defaults(self):
