@@ -21,9 +21,3 @@ install:
   - pip install -e .
 
 script: python setup.py test
-
-notifications:
-  irc:
-    channels: "irc.freenode.org#ahref"
-    on_success: change
-    on_failure: change
