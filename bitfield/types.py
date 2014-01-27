@@ -6,6 +6,7 @@ class Bit(object):
         self.number = number
         self.is_set = bool(is_set)
         self.mask = 2 ** int(number)
+        self.children = []
         if not self.is_set:
             self.mask = ~self.mask
 
@@ -96,6 +97,9 @@ class Bit(object):
 
     def evaluate(self, evaluator, qn, connection):
         return self.mask, []
+
+    def prepare(self, evaluator, query, allow_joins):
+        return evaluator.prepare_node(self, query, allow_joins)
 
 
 class BitHandler(object):
