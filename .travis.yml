@@ -16,6 +16,8 @@ before_script:
 
 install:
   - pip install Django==$DJANGO
+  - "if [[ $DJANGO == '1.2.7' ]]; then pip install psycopg2==2.4.1; fi"
+  - "if [[ $DJANGO == '1.3.7' ]]; then pip install psycopg2==2.4.1; fi"
   - pip install -e .
 
 script: python setup.py test
