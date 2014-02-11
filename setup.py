@@ -15,7 +15,6 @@ setup(
         'Django>=1.2',
     ],
     setup_requires=[
-        'nose>=1.0',
     ],
     tests_require=[
         'django-nose>=0.1.3',
