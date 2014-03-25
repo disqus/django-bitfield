@@ -23,6 +23,7 @@ class Bit(object):
 
     def __nonzero__(self):
         return self.is_set
+    __bool__ = __nonzero__
 
     def __eq__(self, value):
         if isinstance(value, Bit):

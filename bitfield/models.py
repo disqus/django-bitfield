@@ -2,6 +2,7 @@ from django.db.models import signals
 from django.db.models.sql.expressions import SQLEvaluator
 from django.db.models.fields import Field, BigIntegerField
 from django.db.models.fields.subclassing import Creator
+from django.utils import six
 try:
     from django.db.models.fields.subclassing import SubfieldBase
 except ImportError:
@@ -92,9 +93,7 @@ class BitFieldMeta(SubfieldBase):
         new_class.contribute_to_class = contribute_to_class
         return new_class
 
-
-class BitField(BigIntegerField):
-    __metaclass__ = BitFieldMeta
+class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
 
     def __init__(self, flags, default=None, *args, **kwargs):
         if isinstance(flags, dict):
@@ -176,7 +175,7 @@ class BitField(BigIntegerField):
             # Regression for #1425: fix bad data that was created resulting
             # in negative values for flags.  Compute the value that would
             # have been visible ot the application to preserve compatibility.
-            if isinstance(value, (int, long)) and value < 0:
+            if isinstance(value, six.integer_types) and value < 0:
                 new_value = 0
                 for bit_number, _ in enumerate(self.flags):
                     new_value |= (value & (2 ** bit_number))
