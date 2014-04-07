@@ -1,35 +1,28 @@
 #!/usr/bin/env python
 
-try:
-    from setuptools import setup, find_packages
-    from setuptools.command.test import test
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
-    from setuptools.command.test import test
-
-
-class mytest(test):
-    def run(self, *args, **kwargs):
-        from runtests import runtests
-        runtests()
+from setuptools import setup, find_packages
 
 setup(
     name='django-bitfield',
-    version='1.4.0',
+    version='1.6.4',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/django-bitfield',
-    description = 'BitField in Django',
+    description='BitField in Django',
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'django',
+        'Django>=1.2',
     ],
-    test_suite = 'bitfield.tests',
+    setup_requires=[
+        'nose>=1.0',
+    ],
+    tests_require=[
+        'django-nose>=0.1.3',
+        'psycopg2>=2.3',
+    ],
+    test_suite='runtests.runtests',
     include_package_data=True,
-    cmdclass={"test": mytest},
     classifiers=[
         'Framework :: Django',
         'Intended Audience :: Developers',
