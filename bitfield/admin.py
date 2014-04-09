@@ -25,7 +25,7 @@ class BitFieldListFilter(FieldListFilter):
         filter = dict((p, bitor(F(p), v)) for p, v in self.used_parameters.iteritems())
         try:
             return queryset.filter(**filter)
-        except ValidationError, e:
+        except ValidationError as e:
             raise IncorrectLookupParameters(e)
 
     def expected_parameters(self):
