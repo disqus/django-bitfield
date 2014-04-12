@@ -41,3 +41,8 @@ class BitFormField(IntegerField):
             except AttributeError:
                 raise ValidationError('Unknown choice: %r' % (k,))
         return int(result)
+        
+    def prepare_value(self, value):
+		if not value:
+			return []
+		return BitHandler(value, [k for k, v in self.choices])
