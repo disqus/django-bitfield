@@ -21,8 +21,10 @@ class Bit(object):
     def __int__(self):
         return self.mask
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.is_set
+
+    __nonzero__ = __bool__
 
     def __eq__(self, value):
         if isinstance(value, Bit):
