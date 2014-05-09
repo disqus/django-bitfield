@@ -176,7 +176,7 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
             # Regression for #1425: fix bad data that was created resulting
             # in negative values for flags.  Compute the value that would
             # have been visible ot the application to preserve compatibility.
-            if isinstance(value, (int, long)) and value < 0:
+            if isinstance(value, six.integer_types) and value < 0:
                 new_value = 0
                 for bit_number, _ in enumerate(self.flags):
                     new_value |= (value & (2 ** bit_number))
