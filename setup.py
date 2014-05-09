@@ -13,6 +13,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Django>=1.2',
+        'six',
     ],
     setup_requires=[
         'nose>=1.0',
