@@ -8,6 +8,8 @@ except ImportError:
     # django 1.2
     from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase  # NOQA
 
+import six
+
 from bitfield.forms import BitFormField
 from bitfield.query import BitQueryLookupWrapper
 from bitfield.types import BitHandler, Bit
@@ -93,9 +95,7 @@ class BitFieldMeta(SubfieldBase):
         return new_class
 
 
-class BitField(BigIntegerField):
-    __metaclass__ = BitFieldMeta
-
+class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
     def __init__(self, flags, default=None, *args, **kwargs):
         if isinstance(flags, dict):
             # Get only integer keys in correct range
