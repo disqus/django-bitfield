@@ -21,8 +21,10 @@ class Bit(object):
     def __int__(self):
         return self.mask
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.is_set
+
+    __nonzero__ = __bool__
 
     def __eq__(self, value):
         if isinstance(value, Bit):
@@ -129,8 +131,10 @@ class BitHandler(object):
     def __int__(self):
         return self._value
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._value)
+
+    __nonzero__ = __bool__
 
     def __and__(self, value):
         return BitHandler(self._value & int(value), self._keys)

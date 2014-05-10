@@ -3,13 +3,39 @@ language: python
 python:
   - "2.6"
   - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
 
 env:
   - DJANGO=1.2.7
   - DJANGO=1.3.7
-  - DJANGO=1.4.10
-  - DJANGO=1.5.5
-  - DJANGO=1.6.1
+  - DJANGO=1.4.12
+  - DJANGO=1.5.7
+  - DJANGO=1.6.4
+
+matrix:
+  exclude:
+    - python: "3.2"
+      env: DJANGO=1.2.7
+    - python: "3.3"
+      env: DJANGO=1.2.7
+    - python: "3.4"
+      env: DJANGO=1.2.7
+
+    - python: "3.2"
+      env: DJANGO=1.3.7
+    - python: "3.3"
+      env: DJANGO=1.3.7
+    - python: "3.4"
+      env: DJANGO=1.3.7
+
+    - python: "3.2"
+      env: DJANGO=1.4.12
+    - python: "3.3"
+      env: DJANGO=1.4.12
+    - python: "3.4"
+      env: DJANGO=1.4.12
 
 before_script:
   - psql -c 'create database bitfield_test;' -U postgres
