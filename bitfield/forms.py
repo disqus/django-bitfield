@@ -43,6 +43,9 @@ class BitFormField(IntegerField):
         return int(result)
         
     def prepare_value(self, value):
-		if not value:
-			return []
-		return BitHandler(value, [k for k, v in self.choices])
+        if not value:
+            return []
+        try:
+            return BitHandler(value, [k for k, v in self.choices])
+        except TypeError:
+            return value
