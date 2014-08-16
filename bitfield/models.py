@@ -144,6 +144,8 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
         return value
 
     def get_prep_value(self, value):
+        if value is None:
+            return None
         if isinstance(value, (BitHandler, Bit)):
             value = value.mask
         return int(value)
