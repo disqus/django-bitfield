@@ -108,6 +108,7 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
         if len(flags) > MAX_FLAG_COUNT:
             raise ValueError('Too many flags')
 
+        self._arg_flags = flags
         flags = list(flags)
         labels = []
         for num, flag in enumerate(flags):
@@ -143,6 +144,8 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
         return value
 
     def get_prep_value(self, value):
+        if value is None:
+            return None
         if isinstance(value, (BitHandler, Bit)):
             value = value.mask
         return int(value)
@@ -187,6 +190,11 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
             # Ensure flags are consistent for unpickling
             value._keys = self.flags
         return value
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(BitField, self).deconstruct()
+        args.insert(0, self._arg_flags)
+        return name, path, args, kwargs
 
 
 class CompositeBitFieldWrapper(object):
