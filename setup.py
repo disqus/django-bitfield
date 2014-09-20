@@ -4,10 +4,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-bitfield',
-    version='1.7.0',
+    version='1.7.1',
     author='DISQUS',
     author_email='opensource@disqus.com',
-    url='http://github.com/disqus/django-bitfield',
+    url='https://github.com/disqus/django-bitfield',
     description='BitField in Django',
     packages=find_packages(),
     zip_safe=False,
