@@ -100,10 +100,12 @@ class BitHandlerTest(TestCase):
 
     def test_total_ordering(self):
         bithandler = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
-        self.assertLess(bithandler, int(bithandler) + 1)
-        self.assertLessEqual(bithandler, int(bithandler))
-        self.assertGreaterEqual(bithandler, int(bithandler))
-        self.assertGreater(bithandler, int(bithandler) - 1)
+        # Don't use assertLess, assertGreater since those are not available for
+        # django 1.2
+        self.assertTrue(bithandler < int(bithandler) + 1)
+        self.assertTrue(bithandler <= int(bithandler))
+        self.assertTrue(bithandler >= int(bithandler))
+        self.assertTrue(bithandler > int(bithandler) - 1)
 
 
 class BitTest(TestCase):
