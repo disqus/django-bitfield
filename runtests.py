@@ -22,6 +22,8 @@ if not settings.configured:
         ROOT_URLCONF='',
         DEBUG=False,
     )
+
+if django.VERSION > (1, 7):
     django.setup()
 
 
