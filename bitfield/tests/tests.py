@@ -98,6 +98,13 @@ class BitHandlerTest(TestCase):
         self.assertEquals(bithandler.FLAG_1, True)
         self.assertEquals(bithandler.FLAG_2, False)
 
+    def test_total_ordering(self):
+        bithandler = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
+        self.assertLess(bithandler, int(bithandler) + 1)
+        self.assertLessEqual(bithandler, int(bithandler))
+        self.assertGreaterEqual(bithandler, int(bithandler))
+        self.assertGreater(bithandler, int(bithandler) - 1)
+
 
 class BitTest(TestCase):
     def test_int(self):

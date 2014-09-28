@@ -2,6 +2,7 @@
 import sys
 from optparse import OptionParser
 
+import django
 from django.conf import settings
 
 if not settings.configured:
@@ -21,6 +22,7 @@ if not settings.configured:
         ROOT_URLCONF='',
         DEBUG=False,
     )
+    django.setup()
 
 
 from django_nose import NoseTestSuiteRunner
