@@ -13,12 +13,11 @@ class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
             value = [k for k, v in value if v]
         elif isinstance(value, (int, long)):
             real_value = []
-            placeholder  = 2
+            bit = 1
             for (key, val) in self.choices:
-                if value % placeholder != 0:
+                if value & bit == bit:
                     real_value.append(key)
-                    value -= (value % placeholder)
-                placeholder *= 2
+                bit <<= 1
             value = real_value
 
         return super(BitFieldCheckboxSelectMultiple, self).render(
