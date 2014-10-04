@@ -125,6 +125,18 @@ class BitHandler(object):
     def __cmp__(self, other):
         return cmp(self._value, other)
 
+    def __lt__(self, other):
+        return self._value < other
+
+    def __le__(self, other):
+        return self._value <= other
+
+    def __gt__(self, other):
+        return self._value > other
+
+    def __ge__(self, other):
+        return self._value >= other
+
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, ', '.join('%s=%s' % (k, self.get_bit(n).is_set) for n, k in enumerate(self._keys)),)
 

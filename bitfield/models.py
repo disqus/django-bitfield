@@ -159,7 +159,7 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
         if isinstance(value, SQLEvaluator) and isinstance(value.expression, Bit):
             value = value.expression
         if isinstance(value, (BitHandler, Bit)):
-            return BitQueryLookupWrapper(self.model._meta.db_table, self.db_column or self.name, value)
+            return [value.mask]
         return BigIntegerField.get_db_prep_lookup(self, lookup_type=lookup_type, value=value,
                                                   connection=connection, prepared=prepared)
 
@@ -195,6 +195,9 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
         name, path, args, kwargs = super(BitField, self).deconstruct()
         args.insert(0, self._arg_flags)
         return name, path, args, kwargs
+
+
+BitField.register_lookup(BitQueryLookupWrapper)
 
 
 class CompositeBitFieldWrapper(object):
