@@ -122,6 +122,18 @@ class BitHandler(object):
             return False
         return self._value == other._value
 
+    def __lt__(self, other):
+        return int(self._value) < other
+    
+    def __le__(self, other):
+        return int(self._value) <= other
+    
+    def __gt__(self, other):
+        return int(self._value) > other
+    
+    def __ge__(self, other):
+        return int(self._value) >= other
+
     def __cmp__(self, other):
         return cmp(self._value, other)
 
