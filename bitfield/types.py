@@ -1,3 +1,6 @@
+from six import string_types
+
+
 class Bit(object):
     """
     Represents a single Bit.
@@ -229,7 +232,7 @@ class BitHandler(object):
             yield (k, getattr(self, k).is_set)
 
     def get_label(self, flag):
-        if isinstance(flag, basestring):
+        if isinstance(flag, string_types):
             flag = self._keys.index(flag)
         if isinstance(flag, Bit):
             flag = flag.number

@@ -1,3 +1,5 @@
+import six
+
 from django.db.models import F
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -22,7 +24,7 @@ class BitFieldListFilter(FieldListFilter):
             field, request, params, model, model_admin, field_path)
 
     def queryset(self, request, queryset):
-        filter = dict((p, bitor(F(p), v)) for p, v in self.used_parameters.iteritems())
+        filter = dict((p, bitor(F(p), v)) for p, v in six.iteritems(self.used_parameters))
         try:
             return queryset.filter(**filter)
         except ValidationError as e:
