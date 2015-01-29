@@ -34,7 +34,17 @@ def runtests(*test_args, **kwargs):
     if not test_args:
         test_args = ['bitfield']
 
-    test_runner = NoseTestSuiteRunner(**kwargs)
+    try:
+        from django.test.runner import DiscoverRunner
+        test_runner = DiscoverRunner(**kwargs)
+    except ImportError:
+        test_runner = NoseTestSuiteRunner(**kwargs)
+
+    import django
+    try:
+        django.setup()
+    except AttributeError:
+        pass
 
     failures = test_runner.run_tests(test_args)
     sys.exit(failures)
