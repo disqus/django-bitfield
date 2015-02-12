@@ -18,6 +18,25 @@ class BitQueryLookupWrapper(object):
                 [])
 
 
+try:
+    # Django 1.7+
+    from django.db.models.lookups import Exact
+    class BitQueryLookupWrapper(Exact):
+
+        def process_lhs(self, qn, connection, lhs=None):
+            lhs_sql, params = super(BitQueryLookupWrapper, self).process_lhs(
+                qn, connection, lhs)
+            if self.rhs:
+                lhs_sql = lhs_sql + ' & %s'
+            else:
+                lhs_sql = lhs_sql + ' | %s'
+            params.extend(self.get_db_prep_lookup(self.rhs, connection)[1])
+            return lhs_sql, params
+
+except ImportError:
+    pass
+
+
 class BitQuerySaveWrapper(BitQueryLookupWrapper):
     def as_sql(self, qn, connection):
         """
