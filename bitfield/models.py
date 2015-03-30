@@ -1,5 +1,4 @@
 from django.db.models import signals
-from django.db.models.sql.expressions import SQLEvaluator
 from django.db.models.fields import Field, BigIntegerField
 from django.db.models.fields.subclassing import Creator
 try:
@@ -156,7 +155,7 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
     #     return super(BitField, self).get_db_prep_save(value, connection=connection)
 
     def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
-        if isinstance(value, SQLEvaluator) and isinstance(value.expression, Bit):
+        if isinstance(getattr(value, 'expression', None), Bit):
             value = value.expression
         if isinstance(value, (BitHandler, Bit)):
             if hasattr(self, 'class_lookups'):
@@ -168,7 +167,7 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
                                                   connection=connection, prepared=prepared)
 
     def get_prep_lookup(self, lookup_type, value):
-        if isinstance(value, SQLEvaluator) and isinstance(value.expression, Bit):
+        if isinstance(getattr(value, 'expression', None), Bit):
             value = value.expression
         if isinstance(value, Bit):
             if lookup_type in ('exact',):
@@ -242,13 +241,17 @@ class CompositeBitFieldWrapper(object):
 
 
 class CompositeBitField(object):
+    is_relation = False
+    many_to_many = False
+    concrete = False
+    
     def __init__(self, fields):
         self.fields = fields
 
     def contribute_to_class(self, cls, name):
         self.name = name
         self.model = cls
-        cls._meta.add_virtual_field(self)
+        cls._meta.virtual_fields.append(self)
 
         signals.class_prepared.connect(self.validate_fields, sender=cls)
 
