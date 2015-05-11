@@ -1,10 +1,15 @@
+from __future__ import absolute_import
+
 __all__ = ('bitand', 'bitor')
+
 
 def bitand(a, b):
     return a.bitand(b)
 
+
 def bitor(a, b):
     return a.bitor(b)
+
 
 try:
     from django.db.models.expressions import ExpressionNode
@@ -15,8 +20,8 @@ except ImportError:
     pass
 except AttributeError:
     # Django < 1.5
-    def bitand(a, b):
+    def bitand(a, b):  # NOQA
         return a & b
 
-    def bitor(a, b):
+    def bitor(a, b):  # NOQA
         return a | b

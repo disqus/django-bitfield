@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import pickle
 
 from django.db import connection, models

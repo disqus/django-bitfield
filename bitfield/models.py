@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+
+import six
+
 from django.db.models import signals
 from django.db.models.fields import Field, BigIntegerField
 from django.db.models.fields.subclassing import Creator
@@ -6,8 +10,6 @@ try:
 except ImportError:
     # django 1.2
     from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase  # NOQA
-
-import six
 
 from bitfield.forms import BitFormField
 from bitfield.query import BitQueryLookupWrapper
@@ -244,7 +246,7 @@ class CompositeBitField(object):
     is_relation = False
     many_to_many = False
     concrete = False
-    
+
     def __init__(self, fields):
         self.fields = fields
 

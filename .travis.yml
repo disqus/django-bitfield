@@ -6,17 +6,34 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
+  - "pypy"
+
+sudo: false
+
+cache:
+  directories:
+    - node_modules
+    - .pip_download_cache
+    - "$HOME/virtualenv/python2.7.9"
 
 env:
-  - DJANGO=1.2.7
-  - DJANGO=1.3.7
-  - DJANGO=1.4.12
-  - DJANGO=1.5.7
-  - DJANGO=1.6.4
-  - DJANGO=1.7.7
-  - DJANGO=1.8
+  matrix:
+    - DB=postgres
+    - DB=sqlite
+    - DJANGO=1.2.7
+    - DJANGO=1.3.7
+    - DJANGO=1.4.12
+    - DJANGO=1.5.7
+    - DJANGO=1.6.4
+    - DJANGO=1.7.7
+    - DJANGO=1.8
+    - 'DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+  global:
+    - PIP_DOWNLOAD_CACHE=".pip_download_cache"
 
 matrix:
+  allow_failures:
+    - env: 'DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   exclude:
     - python: "3.2"
       env: DJANGO=1.2.7
@@ -50,13 +67,11 @@ matrix:
       env: DJANGO=1.8
 
 before_script:
-  - psql -c 'create database bitfield_test;' -U postgres
+  - psql -c 'create database bitfield;' -U postgres
 
 install:
-  - pip install Django==$DJANGO
-  - "if [[ $DJANGO == '1.2.7' ]]; then pip install psycopg2==2.4.1 django-nose==0.1.3; fi"
-  - "if [[ $DJANGO == '1.3.7' ]]; then pip install psycopg2==2.4.1 django-nose==0.1.3; fi"
-  - "if [[ $DJANGO == '1.8' ]]; then pip install https://github.com/django-nose/django-nose/archive/master.zip; fi"
-  - pip install -e .
+  - make
 
-script: python setup.py test
+script:
+  - make lint
+  - make test

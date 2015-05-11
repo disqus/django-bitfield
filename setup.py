@@ -15,14 +15,13 @@ setup(
         'Django>=1.2',
         'six',
     ],
-    setup_requires=[
-        'nose>=1.0',
-    ],
-    tests_require=[
-        'django-nose>=0.1.3',
-        'psycopg2>=2.3',
-    ],
-    test_suite='runtests.runtests',
+    extras_require={
+        'tests': [
+            'flake8',
+            'psycopg2>=2.3',
+            'pytest-django',
+        ],
+    },
     include_package_data=True,
     classifiers=[
         'Framework :: Django',
