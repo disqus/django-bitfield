@@ -11,7 +11,7 @@ Provides a BitField like class (using a BigIntegerField) for your Django models.
 Requirements
 ============
 
-* Django >= 1.2
+* Django >= 1.4
 
 Note: SQLite does not support save operations using a ``Bit`` (per the example under Usage)
 

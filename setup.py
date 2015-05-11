@@ -12,12 +12,13 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'Django>=1.2',
+        'Django>=1.4',
         'six',
     ],
     extras_require={
         'tests': [
             'flake8',
+            'mysqlclient',
             'psycopg2>=2.3',
             'pytest-django',
         ],

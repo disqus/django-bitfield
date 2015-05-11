@@ -18,22 +18,32 @@ cache:
 
 env:
   matrix:
-    - DB=postgres
-    - DB=sqlite
-    - DJANGO=1.2.7
-    - DJANGO=1.3.7
-    - DJANGO=1.4.12
-    - DJANGO=1.5.7
-    - DJANGO=1.6.4
-    - DJANGO=1.7.7
-    - DJANGO=1.8
-    - 'DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - DB=mysql DJANGO=1.4.12
+    - DB=postgres DJANGO=1.4.12
+    - DB=sqlite DJANGO=1.4.12
+    - DB=mysql DJANGO=1.5.7
+    - DB=postgres DJANGO=1.5.7
+    - DB=sqlite DJANGO=1.5.7
+    - DB=mysql DJANGO=1.6.4
+    - DB=postgres DJANGO=1.6.4
+    - DB=sqlite DJANGO=1.6.4
+    - DB=mysql DJANGO=1.7.7
+    - DB=postgres DJANGO=1.7.7
+    - DB=sqlite DJANGO=1.7.7
+    - DB=mysql DJANGO=1.8
+    - DB=postgres DJANGO=1.8
+    - DB=sqlite DJANGO=1.8
+    - 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   global:
     - PIP_DOWNLOAD_CACHE=".pip_download_cache"
 
 matrix:
   allow_failures:
-    - env: 'DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   exclude:
     - python: "3.2"
       env: DJANGO=1.2.7
