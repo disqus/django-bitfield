@@ -3,7 +3,6 @@ language: python
 python:
   - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
   - "3.4"
   - "pypy"
@@ -45,36 +44,58 @@ matrix:
     - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
     - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   exclude:
-    - python: "3.2"
-      env: DJANGO=1.2.7
     - python: "3.3"
-      env: DJANGO=1.2.7
-    - python: "3.4"
-      env: DJANGO=1.2.7
-
-    - python: "3.2"
-      env: DJANGO=1.3.7
+      env: DB=mysql DJANGO=1.4.12
     - python: "3.3"
-      env: DJANGO=1.3.7
-    - python: "3.4"
-      env: DJANGO=1.3.7
-
-    - python: "3.2"
-      env: DJANGO=1.4.12
+      env: DB=postgres DJANGO=1.4.12
     - python: "3.3"
-      env: DJANGO=1.4.12
+      env: DB=sqlite DJANGO=1.4.12
     - python: "3.4"
-      env: DJANGO=1.4.12
+      env: DB=mysql DJANGO=1.4.12
+    - python: "3.4"
+      env: DB=postgres DJANGO=1.4.12
+    - python: "3.4"
+      env: DB=sqlite DJANGO=1.4.12
 
     - python: "2.6"
-      env: DJANGO=1.7.7
+      env: DB=mysql DJANGO=1.7.7
+    - python: "2.6"
+      env: DB=postgres DJANGO=1.7.7
+    - python: "2.6"
+      env: DB=sqlite DJANGO=1.7.7
     - python: "3.2"
-      env: DJANGO=1.7.7
+      env: DB=mysql DJANGO=1.7.7
+    - python: "3.2"
+      env: DB=postgres DJANGO=1.7.7
+    - python: "3.2"
+      env: DB=sqlite DJANGO=1.7.7
 
     - python: "2.6"
-      env: DJANGO=1.8
+      env: DB=mysql DJANGO=1.8
+    - python: "2.6"
+      env: DB=postgres DJANGO=1.8
+    - python: "2.6"
+      env: DB=sqlite DJANGO=1.8
     - python: "3.2"
-      env: DJANGO=1.8
+      env: DB=mysql DJANGO=1.8
+    - python: "3.2"
+      env: DB=postgres DJANGO=1.8
+    - python: "3.2"
+      env: DB=sqlite DJANGO=1.8
+
+    - python: "2.6"
+      env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - python: "2.6"
+      env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - python: "2.6"
+      env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - python: "3.2"
+      env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - python: "3.2"
+      env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - python: "3.2"
+      env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+
 
 before_script:
   - psql -c 'create database bitfield;' -U postgres
