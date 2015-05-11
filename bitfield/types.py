@@ -3,6 +3,10 @@ from __future__ import absolute_import
 from six import string_types
 
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
+
 class Bit(object):
     """
     Represents a single Bit.
