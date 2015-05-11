@@ -11,6 +11,15 @@ class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
     def render(self, name, value, attrs=None, choices=()):
         if isinstance(value, BitHandler):
             value = [k for k, v in value if v]
+        elif isinstance(value, (int, long)):
+            real_value = []
+            bit = 1
+            for (key, val) in self.choices:
+                if value & bit == bit:
+                    real_value.append(key)
+                bit <<= 1
+            value = real_value
+
         return super(BitFieldCheckboxSelectMultiple, self).render(
             name, value, attrs=attrs, choices=enumerate(choices))
 
