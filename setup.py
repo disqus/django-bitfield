@@ -16,7 +16,6 @@ setup(
         'six',
     ],
     setup_requires=[
-        'nose>=1.0',
     ],
     tests_require=[
         'django-nose>=0.1.3',
