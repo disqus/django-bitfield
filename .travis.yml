@@ -84,7 +84,7 @@ before_script:
   - if [[ $DB = "mysql" ]]; then mysql -e 'create database bitfield'; fi
 
 install:
-  - pip install Django==$DJANGO
+  - "pip install Django==${DJANGO}"
   - make
 
 script:
