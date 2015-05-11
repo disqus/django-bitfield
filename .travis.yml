@@ -80,7 +80,8 @@ matrix:
 
 
 before_script:
-  - psql -c 'create database bitfield;' -U postgres
+  - if [[ $DB = "postgres" ]]; then psql -c 'create database bitfield;' -U postgres; fi
+  - if [[ $DB = "mysql" ]]; then mysql -e 'create database sentry; fi
 
 install:
   - pip install Django==$DJANGO
