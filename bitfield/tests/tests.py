@@ -28,6 +28,14 @@ except ImportError:
 
 
 class BitHandlerTest(TestCase):
+    def test_comparison(self):
+        bithandler_1 = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
+        bithandler_2 = BitHandler(1, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
+        bithandler_3 = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
+        assert bithandler_1 == bithandler_1
+        assert bithandler_1 != bithandler_2
+        assert bithandler_1 == bithandler_3
+
     def test_defaults(self):
         bithandler = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
         # Default value of 0.
