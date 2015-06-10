@@ -12,8 +12,12 @@ Requirements
 ============
 
 * Django >= 1.4
+* PostgreSQL (see notes)
 
-Note: SQLite does not support save operations using a ``Bit`` (per the example under Usage)
+**Notes:**
+
+- SQLite does not support save operations using a ``Bit`` (per the example under Usage).
+- MySQL fails on most queries related to BitField's.
 
 Installation
 ============
