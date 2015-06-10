@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+
+
 class BitQueryLookupWrapper(object):
     def __init__(self, alias, column, bit):
         self.table_alias = alias
@@ -17,12 +20,11 @@ class BitQueryLookupWrapper(object):
         return ("(%s.%s & %d)" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                 [])
 
-
 try:
     # Django 1.7+
     from django.db.models.lookups import Exact
-    class BitQueryLookupWrapper(Exact):
 
+    class BitQueryLookupWrapper(Exact):  # NOQA
         def process_lhs(self, qn, connection, lhs=None):
             lhs_sql, params = super(BitQueryLookupWrapper, self).process_lhs(
                 qn, connection, lhs)

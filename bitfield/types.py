@@ -1,4 +1,10 @@
+from __future__ import absolute_import
+
 from six import string_types
+
+
+def cmp(a, b):
+    return (a > b) - (a < b)
 
 
 class Bit(object):
@@ -127,13 +133,13 @@ class BitHandler(object):
 
     def __lt__(self, other):
         return int(self._value) < other
-    
+
     def __le__(self, other):
         return int(self._value) <= other
-    
+
     def __gt__(self, other):
         return int(self._value) > other
-    
+
     def __ge__(self, other):
         return int(self._value) >= other
 
@@ -243,7 +249,7 @@ import django
 
 if django.VERSION[:2] >= (1, 8):
     from django.core.exceptions import ImproperlyConfigured
-    
+
     # We need to register adapters in Django 1.8 in order to prevent
     # "ProgrammingError: can't adapt type"
     try:
@@ -252,7 +258,7 @@ if django.VERSION[:2] >= (1, 8):
         Database.register_adapter(BitHandler, lambda x: int(x))
     except ImproperlyConfigured:
         pass
-    
+
     try:
         from django.db.backends.postgresql_psycopg2.base import Database
         Database.extensions.register_adapter(Bit, lambda x: Database.extensions.AsIs(int(x)))

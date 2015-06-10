@@ -12,17 +12,17 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'Django>=1.2',
+        'Django>=1.4',
         'six',
     ],
-    setup_requires=[
-        'nose>=1.0',
-    ],
-    tests_require=[
-        'django-nose>=0.1.3',
-        'psycopg2>=2.3',
-    ],
-    test_suite='runtests.runtests',
+    extras_require={
+        'tests': [
+            'flake8',
+            'mysqlclient',
+            'psycopg2>=2.3',
+            'pytest-django',
+        ],
+    },
     include_package_data=True,
     classifiers=[
         'Framework :: Django',
