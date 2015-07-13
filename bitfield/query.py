@@ -32,7 +32,7 @@ try:
                 lhs_sql = lhs_sql + ' & %s'
             else:
                 lhs_sql = lhs_sql + ' | %s'
-            params.extend(self.get_db_prep_lookup(self.rhs, connection)[1])
+            params.extend(self.process_rhs(qn, connection)[1])
             return lhs_sql, params
 
 except ImportError:
