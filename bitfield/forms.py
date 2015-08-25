@@ -44,7 +44,7 @@ class BitFormField(IntegerField):
         if isinstance(kwargs['initial'], int):
             iv = kwargs['initial']
             l = []
-            for i in range(0, 63):
+            for i in range(0, min(len(choices), 63)):
                 if (1 << i) & iv > 0:
                     l += [choices[i][0]]
             kwargs['initial'] = l
