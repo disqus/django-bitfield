@@ -9,6 +9,6 @@ from bitfield.models import Bit, BitHandler, CompositeBitField, BitField  # NOQA
 
 try:
     VERSION = __import__('pkg_resources') \
-        .get_distribution('bitfield').version
+        .get_distribution('django-bitfield').version
 except Exception:
     VERSION = 'unknown'
