@@ -77,26 +77,7 @@ class BitFieldCreator(Creator):
         return retval
 
 
-class BitFieldMeta(SubfieldBase):
-    """
-    Modified SubFieldBase to use our contribute_to_class method (instead of
-    monkey-patching make_contrib).  This uses our BitFieldCreator descriptor
-    in place of the default.
-
-    NOTE: If we find ourselves needing custom descriptors for fields, we could
-    make this generic.
-    """
-    def __new__(cls, name, bases, attrs):
-        def contribute_to_class(self, cls, name):
-            BigIntegerField.contribute_to_class(self, cls, name)
-            setattr(cls, self.name, BitFieldCreator(self))
-
-        new_class = super(BitFieldMeta, cls).__new__(cls, name, bases, attrs)
-        new_class.contribute_to_class = contribute_to_class
-        return new_class
-
-
-class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
+class BitField(BigIntegerField):
     def __init__(self, flags, default=None, *args, **kwargs):
         if isinstance(flags, dict):
             # Get only integer keys in correct range
@@ -129,6 +110,10 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
         self.flags = flags
         self.labels = labels
 
+    def contribute_to_class(self, cls, name, virtual_only=False):
+        super(BitField, self).contribute_to_class(cls, name, virtual_only)
+        setattr(cls, self.name, BitFieldCreator(self))
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         from south.modelsinspector import introspector
@@ -150,11 +135,6 @@ class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
         if isinstance(value, (BitHandler, Bit)):
             value = value.mask
         return int(value)
-
-    # def get_db_prep_save(self, value, connection):
-    #     if isinstance(value, Bit):
-    #         return BitQuerySaveWrapper(self.model._meta.db_table, self.name, value)
-    #     return super(BitField, self).get_db_prep_save(value, connection=connection)
 
     def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
         if isinstance(getattr(value, 'expression', None), Bit):
