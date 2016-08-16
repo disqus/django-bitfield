@@ -80,7 +80,6 @@ class BitFieldCreator(object):
 
 class BitField(BigIntegerField):
 
-
     def contribute_to_class(self, cls, name, **kwargs):
         super(BitField, self).contribute_to_class(cls, name, **kwargs)
         setattr(cls, self.name, BitFieldCreator(self))
