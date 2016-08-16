@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 def pytest_configure(config):
     if not settings.configured:
-        test_db = os.environ.get('DB', 'postgres')
+        test_db = os.environ.get('DB', 'sqlite')
 
         DATABASES = {
             'default': {
