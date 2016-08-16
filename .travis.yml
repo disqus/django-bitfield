@@ -15,16 +15,16 @@ cache:
 
 env:
   matrix:
-    # - DB=mysql DJANGO=1.6.4
-    - DB=postgres DJANGO=1.6.4
-    - DB=sqlite DJANGO=1.6.4
-    # - DB=mysql DJANGO=1.7.7
-    - DB=postgres DJANGO=1.7.7
-    - DB=sqlite DJANGO=1.7.7
-    # - DB=mysql DJANGO=1.8
-    - DB=postgres DJANGO=1.8
-    - DB=sqlite DJANGO=1.8
-    # - 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - DB=postgres DJANGO=1.6.11
+    - DB=sqlite DJANGO=1.6.11
+    - DB=postgres DJANGO=1.7.11
+    - DB=sqlite DJANGO=1.7.11
+    - DB=postgres DJANGO=1.8.14
+    - DB=sqlite DJANGO=1.8.14
+    - DB=postgres DJANGO=1.9.9
+    - DB=sqlite DJANGO=1.9.9
+    - DB=postgres DJANGO=1.10
+    - DB=sqlite DJANGO=1.10
     - 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
     - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   global:
