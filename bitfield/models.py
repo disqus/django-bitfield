@@ -4,12 +4,6 @@ import six
 
 from django.db.models import signals
 from django.db.models.fields import Field, BigIntegerField
-from django.db.models.fields.subclassing import Creator
-try:
-    from django.db.models.fields.subclassing import SubfieldBase
-except ImportError:
-    # django 1.2
-    from django.db.models.fields.subclassing import LegacyConnection as SubfieldBase  # NOQA
 
 from bitfield.forms import BitFormField
 from bitfield.query import BitQueryLookupWrapper
@@ -60,13 +54,20 @@ class BitFieldFlags(object):
         return list(self.itervalues())
 
 
-class BitFieldCreator(Creator):
+class BitFieldCreator(object):
     """
+    A placeholder class that provides a way to set the attribute on the model.
     Descriptor for BitFields.  Checks to make sure that all flags of the
     instance match the class.  This is to handle the case when caching
     an older version of the instance and a newer version of the class is
     available (usually during deploys).
     """
+    def __init__(self, field):
+        self.field = field
+
+    def __set__(self, obj, value):
+        obj.__dict__[self.field.name] = self.field.to_python(value)
+
     def __get__(self, obj, type=None):
         if obj is None:
             return BitFieldFlags(self.field.flags)
@@ -77,26 +78,13 @@ class BitFieldCreator(Creator):
         return retval
 
 
-class BitFieldMeta(SubfieldBase):
-    """
-    Modified SubFieldBase to use our contribute_to_class method (instead of
-    monkey-patching make_contrib).  This uses our BitFieldCreator descriptor
-    in place of the default.
-
-    NOTE: If we find ourselves needing custom descriptors for fields, we could
-    make this generic.
-    """
-    def __new__(cls, name, bases, attrs):
-        def contribute_to_class(self, cls, name):
-            BigIntegerField.contribute_to_class(self, cls, name)
-            setattr(cls, self.name, BitFieldCreator(self))
-
-        new_class = super(BitFieldMeta, cls).__new__(cls, name, bases, attrs)
-        new_class.contribute_to_class = contribute_to_class
-        return new_class
+class BitField(BigIntegerField):
 
 
-class BitField(six.with_metaclass(BitFieldMeta, BigIntegerField)):
+    def contribute_to_class(self, cls, name, **kwargs):
+        super(BitField, self).contribute_to_class(cls, name, **kwargs)
+        setattr(cls, self.name, BitFieldCreator(self))
+
     def __init__(self, flags, default=None, *args, **kwargs):
         if isinstance(flags, dict):
             # Get only integer keys in correct range
