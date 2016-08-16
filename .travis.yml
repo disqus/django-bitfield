@@ -1,7 +1,6 @@
 language: python
 
 python:
-  - "2.6"
   - "2.7"
   - "3.3"
   - "3.4"
@@ -16,12 +15,6 @@ cache:
 
 env:
   matrix:
-    # - DB=mysql DJANGO=1.4.12
-    - DB=postgres DJANGO=1.4.12
-    - DB=sqlite DJANGO=1.4.12
-    # - DB=mysql DJANGO=1.5.7
-    - DB=postgres DJANGO=1.5.7
-    - DB=sqlite DJANGO=1.5.7
     # - DB=mysql DJANGO=1.6.4
     - DB=postgres DJANGO=1.6.4
     - DB=sqlite DJANGO=1.6.4
@@ -43,19 +36,6 @@ matrix:
     - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
     - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   exclude:
-    # - python: "3.3"
-    #   env: DB=mysql DJANGO=1.4.12
-    - python: "3.3"
-      env: DB=postgres DJANGO=1.4.12
-    - python: "3.3"
-      env: DB=sqlite DJANGO=1.4.12
-    # - python: "3.4"
-    #   env: DB=mysql DJANGO=1.4.12
-    - python: "3.4"
-      env: DB=postgres DJANGO=1.4.12
-    - python: "3.4"
-      env: DB=sqlite DJANGO=1.4.12
-
     # - python: "2.6"
     #   env: DB=mysql DJANGO=1.7.7
     - python: "2.6"
