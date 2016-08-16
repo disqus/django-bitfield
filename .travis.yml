@@ -35,28 +35,6 @@ matrix:
     # - env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
     - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
     - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-  exclude:
-    # - python: "2.6"
-    #   env: DB=mysql DJANGO=1.7.7
-    - python: "2.6"
-      env: DB=postgres DJANGO=1.7.7
-    - python: "2.6"
-      env: DB=sqlite DJANGO=1.7.7
-
-
-    # - python: "2.6"
-    #   env: DB=mysql DJANGO=1.8
-    - python: "2.6"
-      env: DB=postgres DJANGO=1.8
-    - python: "2.6"
-      env: DB=sqlite DJANGO=1.8
-
-    # - python: "2.6"
-    #   env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - python: "2.6"
-      env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - python: "2.6"
-      env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
 
 
 before_script:
