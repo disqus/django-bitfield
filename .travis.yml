@@ -15,10 +15,6 @@ cache:
 
 env:
   matrix:
-    - DB=postgres DJANGO=1.6.11
-    - DB=sqlite DJANGO=1.6.11
-    - DB=postgres DJANGO=1.7.11
-    - DB=sqlite DJANGO=1.7.11
     - DB=postgres DJANGO=1.8.14
     - DB=sqlite DJANGO=1.8.14
     - DB=postgres DJANGO=1.9.9
