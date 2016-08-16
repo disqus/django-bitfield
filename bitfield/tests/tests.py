@@ -7,8 +7,10 @@ from django.db.models import F
 from django.test import TestCase
 
 from bitfield import BitHandler, Bit, BitField
-from bitfield.tests import BitFieldTestModel, CompositeBitFieldTestModel, BitFieldTestModelForm
 from bitfield.compat import bitand, bitor
+
+from .forms import BitFieldTestModelForm
+from .models import BitFieldTestModel, CompositeBitFieldTestModel
 
 try:
     from django.db.models.base import simple_class_factory  # noqa
