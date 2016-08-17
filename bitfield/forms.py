@@ -24,7 +24,7 @@ class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
                 div *= 2
             value = real_value
         return super(BitFieldCheckboxSelectMultiple, self).render(
-            name, value, attrs=attrs, choices=enumerate(choices))
+            name, value, attrs=attrs)
 
     def _has_changed(self, initial, data):
         if initial is None:
