@@ -55,7 +55,9 @@ class BitFormField(IntegerField):
     def clean(self, value):
         if not value:
             return 0
+        return int(self.to_python(value))
 
+    def to_python(self, value):
         # Assume an iterable which contains an item per flag that's enabled
         result = BitHandler(0, [k for k, v in self.choices])
         for k in value:
@@ -63,4 +65,4 @@ class BitFormField(IntegerField):
                 setattr(result, str(k), True)
             except AttributeError:
                 raise ValidationError('Unknown choice: %r' % (k,))
-        return int(result)
+        return result
