@@ -4,6 +4,7 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
+  - "3.5"
 
 sudo: false
 
@@ -19,8 +20,8 @@ env:
     - DB=sqlite DJANGO=1.8.14
     - DB=postgres DJANGO=1.9.9
     - DB=sqlite DJANGO=1.9.9
-    - DB=postgres DJANGO=1.10
-    - DB=sqlite DJANGO=1.10
+    - DB=postgres DJANGO=1.10.1
+    - DB=sqlite DJANGO=1.10.1
     - 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
     - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   global:

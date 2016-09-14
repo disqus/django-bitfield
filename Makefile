@@ -6,7 +6,7 @@ develop:
 
 test:
 	@echo "--> Running Python tests"
-	py.test
+	py.test bitfield
 	@echo ""
 
 lint:
