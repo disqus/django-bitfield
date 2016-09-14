@@ -32,7 +32,7 @@ try:
                 lhs_sql = lhs_sql + ' & %s'
             else:
                 lhs_sql = lhs_sql + ' | %s'
-            params.extend(self.get_db_prep_lookup(self.rhs, connection)[1])
+            params.extend(self.process_rhs(qn, connection)[1])
             return lhs_sql, params
 
 except ImportError:
@@ -47,16 +47,9 @@ class BitQuerySaveWrapper(BitQueryLookupWrapper):
 
         This will be called by Where.as_sql()
         """
-        engine = connection.settings_dict['ENGINE'].rsplit('.', -1)[-1]
-        if engine.startswith('postgres'):
-            XOR_OPERATOR = '#'
-        elif engine.startswith('sqlite'):
-            raise NotImplementedError
-        else:
-            XOR_OPERATOR = '^'
 
         if self.bit:
             return ("%s.%s | %d" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                     [])
-        return ("%s.%s %s %d" % (qn(self.table_alias), qn(self.column), XOR_OPERATOR, self.bit.mask),
+        return ("%s.%s & ~%d" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                 [])
