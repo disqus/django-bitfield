@@ -3,90 +3,30 @@ language: python
 python:
   - "2.6"
   - "2.7"
+  - "3.2"
   - "3.3"
   - "3.4"
 
-sudo: false
-
-cache:
-  directories:
-    - node_modules
-    - .pip_download_cache
-    - "$HOME/virtualenv/python2.7.9"
-
 env:
-  matrix:
-    # - DB=mysql DJANGO=1.4.12
-    - DB=postgres DJANGO=1.4.12
-    - DB=sqlite DJANGO=1.4.12
-    # - DB=mysql DJANGO=1.5.7
-    - DB=postgres DJANGO=1.5.7
-    - DB=sqlite DJANGO=1.5.7
-    # - DB=mysql DJANGO=1.6.4
-    - DB=postgres DJANGO=1.6.4
-    - DB=sqlite DJANGO=1.6.4
-    # - DB=mysql DJANGO=1.7.7
-    - DB=postgres DJANGO=1.7.7
-    - DB=sqlite DJANGO=1.7.7
-    # - DB=mysql DJANGO=1.8
-    - DB=postgres DJANGO=1.8
-    - DB=sqlite DJANGO=1.8
-    # - 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-  global:
-    - PIP_DOWNLOAD_CACHE=".pip_download_cache"
+  - DJANGO=1.4.12
+  - DJANGO=1.5.7
+  - DJANGO=1.6.4
+  - DJANGO=1.8.7
 
 matrix:
-  allow_failures:
-    # - env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   exclude:
-    # - python: "3.3"
-    #   env: DB=mysql DJANGO=1.4.12
+    - python: "3.2"
+      env: DJANGO=1.4.12
     - python: "3.3"
-      env: DB=postgres DJANGO=1.4.12
-    - python: "3.3"
-      env: DB=sqlite DJANGO=1.4.12
-    # - python: "3.4"
-    #   env: DB=mysql DJANGO=1.4.12
+      env: DJANGO=1.4.12
     - python: "3.4"
-      env: DB=postgres DJANGO=1.4.12
-    - python: "3.4"
-      env: DB=sqlite DJANGO=1.4.12
-
-    # - python: "2.6"
-    #   env: DB=mysql DJANGO=1.7.7
-    - python: "2.6"
-      env: DB=postgres DJANGO=1.7.7
-    - python: "2.6"
-      env: DB=sqlite DJANGO=1.7.7
-
-
-    # - python: "2.6"
-    #   env: DB=mysql DJANGO=1.8
-    - python: "2.6"
-      env: DB=postgres DJANGO=1.8
-    - python: "2.6"
-      env: DB=sqlite DJANGO=1.8
-
-    # - python: "2.6"
-    #   env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - python: "2.6"
-      env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - python: "2.6"
-      env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-
+      env: DJANGO=1.4.12
 
 before_script:
-  - if [[ $DB = "postgres" ]]; then psql -c 'create database bitfield;' -U postgres; fi
-  - if [[ $DB = "mysql" ]]; then mysql -e 'create database bitfield'; fi
+  - psql -c 'create database bitfield_test;' -U postgres
 
 install:
-  - "pip install Django==${DJANGO}"
-  - make
+  - pip install Django==$DJANGO
+  - pip install -e .
 
-script:
-  - make lint
-  - make test
+script: python setup.py test

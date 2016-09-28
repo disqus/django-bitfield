@@ -15,14 +15,14 @@ setup(
         'Django>=1.4',
         'six',
     ],
-    extras_require={
-        'tests': [
-            'flake8',
-            'mysqlclient',
-            'psycopg2>=2.3',
-            'pytest-django',
-        ],
-    },
+    setup_requires=[
+        'nose>=1.0',
+    ],
+    tests_require=[
+        'django-nose>=0.1.3',
+        'psycopg2>=2.3',
+    ],
+    test_suite='runtests.runtests',
     include_package_data=True,
     classifiers=[
         'Framework :: Django',
