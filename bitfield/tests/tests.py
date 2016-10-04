@@ -404,4 +404,3 @@ class BitFormFieldTest(TestCase):
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertFalse(bool(getattr(instance.flags, k)))
-
