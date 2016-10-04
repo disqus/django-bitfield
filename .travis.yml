@@ -21,16 +21,16 @@ env:
     - DB=sqlite DJANGO=1.9.9
     - DB=postgres DJANGO=1.10
     - DB=sqlite DJANGO=1.10
-    - 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - 'DB=postgres DJANGO="-e git+git://github.com/django/django.gi"'
+    - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git"'
   global:
     - PIP_DOWNLOAD_CACHE=".pip_download_cache"
 
 matrix:
   allow_failures:
     # - env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git"'
+    - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git"'
 
 
 before_script:
