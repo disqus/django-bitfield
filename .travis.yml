@@ -15,22 +15,22 @@ cache:
 
 env:
   matrix:
-    - DB=postgres DJANGO=1.8.14
-    - DB=sqlite DJANGO=1.8.14
-    - DB=postgres DJANGO=1.9.9
-    - DB=sqlite DJANGO=1.9.9
-    - DB=postgres DJANGO=1.10
-    - DB=sqlite DJANGO=1.10
-    - 'DB=postgres DJANGO="-e git+git://github.com/django/django.gi"'
-    - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git"'
+    - DB=postgres DJANGO="Django==1.8.14"
+    - DB=sqlite DJANGO="Django==1.8.14"
+    - DB=postgres DJANGO="Django==1.9.9"
+    - DB=sqlite DJANGO="Django==1.9.9"
+    - DB=postgres DJANGO="Django==1.10"
+    - DB=sqlite DJANGO="Django==1.10"
+    - 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
   global:
     - PIP_DOWNLOAD_CACHE=".pip_download_cache"
 
 matrix:
   allow_failures:
     # - env: 'DB=mysql DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
-    - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git"'
-    - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git"'
+    - env: 'DB=postgres DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
+    - env: 'DB=sqlite DJANGO="-e git+git://github.com/django/django.git#egg=Django"'
 
 
 before_script:
@@ -38,7 +38,7 @@ before_script:
   - if [[ $DB = "mysql" ]]; then mysql -e 'create database bitfield'; fi
 
 install:
-  - "pip install Django==${DJANGO}"
+  - "pip install ${DJANGO}"
   - make
 
 script:
