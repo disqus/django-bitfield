@@ -22,6 +22,7 @@ class BitQueryLookupWrapper(object):
         return ("(%s.%s & %d)" % (qn(self.table_alias), qn(self.column), self.bit.mask),
                 [])
 
+
 try:
     # Django 1.7+
     from django.db.models.lookups import Exact
