@@ -44,3 +44,11 @@ install:
 script:
   - make lint
   - make test
+
+deploy:
+  provider: pypi
+  user: disqus
+  password:
+    secure: QBNCmnsH6/5/knGZbaf3FyNo+Qfqz88uZSzS8KGVsr2FPOevDq7e6Wmk/xZQmFHXaTTKXRtik+wkledWc9tPT1iTrl7zc0N8wdbOK8DbPGVoguA5RqP/toO9k3YDI1jY2nH94V/fJPkGbtWruaeDZ/WlXxA/sl5jx8K+sf14Vd4=
+  on:
+    tags: true
