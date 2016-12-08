@@ -11,7 +11,7 @@ Provides a BitField like class (using a BigIntegerField) for your Django models.
 Requirements
 ============
 
-* Django >= 1.10
+* Django >= 1.4
 * PostgreSQL (see notes)
 
 **Notes:**
