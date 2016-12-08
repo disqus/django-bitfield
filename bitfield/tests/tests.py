@@ -7,24 +7,10 @@ from django.db.models import F
 from django.test import TestCase
 
 from bitfield import BitHandler, Bit, BitField
-from bitfield.tests import BitFieldTestModel, CompositeBitFieldTestModel, BitFieldTestModelForm
 from bitfield.compat import bitand, bitor
 
-try:
-    from django.db.models.base import simple_class_factory  # noqa
-except ImportError:
-    # Django 1.5 muffed up the base class which breaks the pickle tests
-    # Note, it's fixed again in 1.6.
-    from django.db.models import base
-    _model_unpickle = base.model_unpickle
-
-    def simple_class_factory(model, attrs):
-        return model
-
-    def model_unpickle(model, attrs, factory):
-        return _model_unpickle(model, attrs)
-    setattr(base, 'simple_class_factory', simple_class_factory)
-    setattr(base, 'model_unpickle', model_unpickle)
+from .forms import BitFieldTestModelForm
+from .models import BitFieldTestModel, CompositeBitFieldTestModel
 
 
 class BitHandlerTest(TestCase):
@@ -171,7 +157,7 @@ class BitFieldTest(TestCase):
         self.assertTrue(instance.flags.FLAG_3)
 
         cursor = connection.cursor()
-        flags_field = BitFieldTestModel._meta.get_field_by_name('flags')[0]
+        flags_field = BitFieldTestModel._meta.get_field('flags')
         flags_db_column = flags_field.db_column or flags_field.name
         cursor.execute("INSERT INTO %s (%s) VALUES (-1)" % (BitFieldTestModel._meta.db_table, flags_db_column))
         # There should only be the one row we inserted through the cursor.
@@ -289,8 +275,10 @@ class BitFieldTest(TestCase):
 
 class BitFieldSerializationTest(TestCase):
     def test_can_unserialize_bithandler(self):
-        data = b"cdjango.db.models.base\nmodel_unpickle\np0\n(cbitfield.tests.models\nBitFieldTestModel\np1\n(lp2\ncdjango.db.models.base\nsimple_class_factory\np3\ntp4\nRp5\n(dp6\nS'flags'\np7\nccopy_reg\n_reconstructor\np8\n(cbitfield.types\nBitHandler\np9\nc__builtin__\nobject\np10\nNtp11\nRp12\n(dp13\nS'_value'\np14\nI1\nsS'_keys'\np15\n(S'FLAG_0'\np16\nS'FLAG_1'\np17\nS'FLAG_2'\np18\nS'FLAG_3'\np19\ntp20\nsbsS'_state'\np21\ng8\n(cdjango.db.models.base\nModelState\np22\ng10\nNtp23\nRp24\n(dp25\nS'adding'\np26\nI00\nsS'db'\np27\nS'default'\np28\nsbsS'id'\np29\nI1\nsb."
-
+        bf = BitFieldTestModel()
+        bf.flags.FLAG_0 = 1
+        bf.flags.FLAG_1 = 0
+        data = pickle.dumps(bf)
         inst = pickle.loads(data)
         self.assertTrue(inst.flags.FLAG_0)
         self.assertFalse(inst.flags.FLAG_1)
@@ -303,8 +291,11 @@ class BitFieldSerializationTest(TestCase):
         self.assertEquals(int(inst.flags), 1)
 
     def test_added_field(self):
-        data = b"cdjango.db.models.base\nmodel_unpickle\np0\n(cbitfield.tests.models\nBitFieldTestModel\np1\n(lp2\ncdjango.db.models.base\nsimple_class_factory\np3\ntp4\nRp5\n(dp6\nS'flags'\np7\nccopy_reg\n_reconstructor\np8\n(cbitfield.types\nBitHandler\np9\nc__builtin__\nobject\np10\nNtp11\nRp12\n(dp13\nS'_value'\np14\nI1\nsS'_keys'\np15\n(S'FLAG_0'\np16\nS'FLAG_1'\np17\nS'FLAG_2'\np18\ntp19\nsbsS'_state'\np20\ng8\n(cdjango.db.models.base\nModelState\np21\ng10\nNtp22\nRp23\n(dp24\nS'adding'\np25\nI00\nsS'db'\np27\nS'default'\np27\nsbsS'id'\np28\nI1\nsb."
-
+        bf = BitFieldTestModel()
+        bf.flags.FLAG_0 = 1
+        bf.flags.FLAG_1 = 0
+        bf.flags.FLAG_3 = 0
+        data = pickle.dumps(bf)
         inst = pickle.loads(data)
         self.assertTrue('FLAG_3' in inst.flags.keys())
 
