@@ -29,7 +29,7 @@ class BitFieldFlags(object):
 
     def __getattr__(self, key):
         if key not in self._flags:
-            raise AttributeError
+            raise AttributeError("flag {} is not registered".format(key))
         return Bit(self._flags.index(key))
 
     def iteritems(self):
