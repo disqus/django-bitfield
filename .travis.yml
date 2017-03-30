@@ -5,6 +5,9 @@ python:
 - '3.5'
 install: pip install flake8 tox-travis
 
+services:
+  - postgresql
+
 script:
 - make lint
 - make test
