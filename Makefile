@@ -6,7 +6,7 @@ develop:
 
 test:
 	@echo "--> Running Python tests"
-	py.test
+	tox
 	@echo ""
 
 lint:
