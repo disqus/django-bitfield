@@ -6,10 +6,6 @@ python:
 sudo: false
 install: pip install tox-travis
 
-before_script:
-- if [[ $DB = "postgres" ]]; then psql -c 'create database bitfield;' -U postgres;
-  fi
-
 script:
 - make lint
 - make test
