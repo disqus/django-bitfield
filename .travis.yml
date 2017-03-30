@@ -8,6 +8,9 @@ install: pip install flake8 tox-travis
 services:
   - postgresql
 
+before_script:
+ - psql -c 'create database bitfield;' -U postgres;
+
 script:
 - make lint
 - make test
