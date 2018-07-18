@@ -1,10 +1,22 @@
 #!/usr/bin/env python
 
+import ast
+import os.path
 from setuptools import setup, find_packages
+
+class GetVersion(ast.NodeVisitor):
+    def __init__(self, path):
+        with open(path) as f:
+            self.visit(ast.parse(f.read(), path))
+
+    def visit_Assign(self, node):
+        if any(target.id == 'VERSION' for target in node.targets):
+            assert not hasattr(self, 'VERSION')
+            self.VERSION = node.value.s
 
 setup(
     name='django-bitfield',
-    version='1.9.3',
+    version=GetVersion(os.path.join(os.path.dirname(__file__), 'bitfield', '__init__.py')).VERSION,
     author='Disqus',
     author_email='opensource@disqus.com',
     url='https://github.com/disqus/django-bitfield',
