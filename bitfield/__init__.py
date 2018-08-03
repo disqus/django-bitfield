@@ -10,6 +10,6 @@ default_app_config = 'bitfield.apps.BitFieldAppConfig'
 
 try:
     VERSION = __import__('pkg_resources') \
-        .get_distribution('bitfield').version
+        .get_distribution('django-bitfield').version
 except Exception:
     VERSION = 'unknown'
