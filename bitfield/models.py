@@ -240,7 +240,7 @@ class CompositeBitField(object):
     def contribute_to_class(self, cls, name):
         self.name = name
         self.model = cls
-        cls._meta.virtual_fields.append(self)
+        cls._meta.private_fields.append(self)
 
         signals.class_prepared.connect(self.validate_fields, sender=cls)
 
