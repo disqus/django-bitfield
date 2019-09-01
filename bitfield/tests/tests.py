@@ -357,7 +357,7 @@ class BitFormFieldTest(TestCase):
         ]
         for data in data_dicts:
             form = BitFieldTestModelForm(data=data)
-            self.failUnless(form.is_valid())
+            self.assertTrue(form.is_valid())
             instance = form.save()
             flags = data['flags'] if 'flags' in data else []
             for k in BitFieldTestModel.flags:
@@ -370,21 +370,21 @@ class BitFormFieldTest(TestCase):
 
         data = {'flags': ['FLAG_0', 'FLAG_1']}
         form = BitFieldTestModelForm(data=data, instance=instance)
-        self.failUnless(form.is_valid())
+        self.assertTrue(form.is_valid())
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertEquals(bool(getattr(instance.flags, k)), k in data['flags'])
 
         data = {'flags': ['FLAG_2', 'FLAG_3']}
         form = BitFieldTestModelForm(data=data, instance=instance)
-        self.failUnless(form.is_valid())
+        self.assertTrue(form.is_valid())
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertEquals(bool(getattr(instance.flags, k)), k in data['flags'])
 
         data = {'flags': []}
         form = BitFieldTestModelForm(data=data, instance=instance)
-        self.failUnless(form.is_valid())
+        self.assertTrue(form.is_valid())
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertFalse(bool(getattr(instance.flags, k)))
