@@ -104,8 +104,8 @@ class BitTest(TestCase):
 
     def test_comparison(self):
         self.assertEqual(Bit(0), Bit(0))
-        self.assertNotEquals(Bit(1), Bit(0))
-        self.assertNotEquals(Bit(0, 0), Bit(0, 1))
+        self.assertNotEqual(Bit(1), Bit(0))
+        self.assertNotEqual(Bit(0, 0), Bit(0, 1))
         self.assertEqual(Bit(0, 1), Bit(0, 1))
         self.assertEqual(Bit(0), 1)
 
