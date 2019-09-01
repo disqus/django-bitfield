@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'Django>=1.8.19',
+        'Django>=1.10.8',
         'six',
     ],
     extras_require={
