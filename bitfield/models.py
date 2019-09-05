@@ -189,10 +189,7 @@ class BitField(BigIntegerField):
         return name, path, args, kwargs
 
 
-try:
-    BitField.register_lookup(BitQueryLookupWrapper)
-except AttributeError:
-    pass
+BitField.register_lookup(BitQueryLookupWrapper)
 
 
 class CompositeBitFieldWrapper(object):
