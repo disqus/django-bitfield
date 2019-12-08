@@ -257,7 +257,10 @@ except ImproperlyConfigured:
     pass
 
 try:
-    from django.db.backends.postgresql_psycopg2.base import Database
+    if django.VERSION[:2] >= (1, 9):
+        from django.db.backends.postgresql.base import Database
+    else:
+        from django.db.backends.postgresql_psycopg2.base import Database
     Database.extensions.register_adapter(Bit, lambda x: Database.extensions.AsIs(int(x)))
     Database.extensions.register_adapter(BitHandler, lambda x: Database.extensions.AsIs(int(x)))
 except ImproperlyConfigured:
