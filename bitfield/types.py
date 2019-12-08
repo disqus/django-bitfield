@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 from six import string_types
 
+from django import VERSION as django_version
+
 
 def cmp(a, b):
     return (a > b) - (a < b)
@@ -257,7 +259,7 @@ except ImproperlyConfigured:
     pass
 
 try:
-    if django.VERSION[:2] >= (1, 9):
+    if django_version[:2] >= (1, 9):
         from django.db.backends.postgresql.base import Database
     else:
         from django.db.backends.postgresql_psycopg2.base import Database
