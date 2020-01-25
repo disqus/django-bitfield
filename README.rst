@@ -111,7 +111,7 @@ BitFieldListFilter is in ``bitfield.admin`` module::
 Changelog
 =========
 
-Scheduled for 2.0 release:
+2.0.0 - 2020-01-24:
 
 - Drop support for Django versions below 1.10.
 - Use _meta.private_fields instead of deprecated _meta.virtual_fields in CompositeBitField.
