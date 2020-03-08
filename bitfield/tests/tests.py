@@ -31,7 +31,7 @@ class BitHandlerTest(TestCase):
         self.assertEqual(int(bithandler.FLAG_1.number), 1)
         self.assertEqual(int(bithandler.FLAG_2.number), 2)
         self.assertEqual(int(bithandler.FLAG_3.number), 3)
-        # Negative test non-existant key.
+        # Negative test non-existent key.
         self.assertRaises(AttributeError, lambda: bithandler.FLAG_4)
         # Test bool().
         self.assertEqual(bool(bithandler.FLAG_0), False)
