@@ -127,10 +127,6 @@ class BitField(BigIntegerField):
         choices = [(k, self.labels[self.flags.index(k)]) for k in self.flags]
         return Field.formfield(self, form_class, choices=choices, **kwargs)
 
-    def pre_save(self, instance, add):
-        value = getattr(instance, self.attname)
-        return value
-
     def get_prep_value(self, value):
         if value is None:
             return None
