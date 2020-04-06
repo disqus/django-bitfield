@@ -5,22 +5,28 @@ from django.db.models.lookups import Exact
 
 
 class BitQueryLookupWrapper(Exact):  # NOQA
-    def process_lhs(self, qn, connection, lhs=None):
-        lhs_sql, params = super(BitQueryLookupWrapper, self).process_lhs(
-            qn, connection, lhs)
-        if self.rhs:
-            lhs_sql = lhs_sql + ' & %s'
-        else:
-            lhs_sql = lhs_sql + ' | %s'
-        params.extend(self.get_db_prep_lookup(self.rhs, connection)[1])
-        return lhs_sql, params
+    def process_lhs(self, compiler, connection, lhs=None):
+        lhs_sql, lhs_params = super(BitQueryLookupWrapper, self).process_lhs(
+            compiler, connection, lhs)
+
+        if not isinstance(self.rhs, (BitHandler, Bit)):
+            return lhs_sql, lhs_params
+
+        op = ' & ' if self.rhs else ' | '
+        rhs_sql, rhs_params = self.process_rhs(compiler, connection)
+        params = list(lhs_params)
+        params.extend(rhs_params)
+
+        return op.join((lhs_sql, rhs_sql)), params
 
     def get_db_prep_lookup(self, value, connection, prepared=False):
         v = value.mask if isinstance(value, (BitHandler, Bit)) else value
         return super(BitQueryLookupWrapper, self).get_db_prep_lookup(v, connection)
 
     def get_prep_lookup(self):
-        return self.rhs
+        if isinstance(self.rhs, (BitHandler, Bit)):
+            return self.rhs  # resolve at later stage, in get_db_prep_lookup
+        return super(BitQueryLookupWrapper, self).get_prep_lookup()
 
 
 class BitQuerySaveWrapper(BitQueryLookupWrapper):
