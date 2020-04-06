@@ -7,7 +7,6 @@ from django.contrib.admin import FieldListFilter
 from django.contrib.admin.options import IncorrectLookupParameters
 
 from bitfield import Bit
-from bitfield.compat import bitor
 
 
 class BitFieldListFilter(FieldListFilter):
@@ -24,7 +23,7 @@ class BitFieldListFilter(FieldListFilter):
             field, request, params, model, model_admin, field_path)
 
     def queryset(self, request, queryset):
-        filter = dict((p, bitor(F(p), v)) for p, v in six.iteritems(self.used_parameters))
+        filter = dict((p, F(p).bitor(v)) for p, v in six.iteritems(self.used_parameters))
         try:
             return queryset.filter(**filter)
         except ValidationError as e:
