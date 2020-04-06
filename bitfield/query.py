@@ -15,7 +15,7 @@ class BitQueryLookupWrapper(Exact):  # NOQA
         params.extend(self.get_db_prep_lookup(self.rhs, connection)[1])
         return lhs_sql, params
 
-    def get_db_prep_lookup(self, value, connection, prepared=False):
+    def get_db_prep_lookup(self, value, connection):
         v = value.mask if isinstance(value, (BitHandler, Bit)) else value
         return super(BitQueryLookupWrapper, self).get_db_prep_lookup(v, connection)
 
