@@ -28,9 +28,24 @@ class BitFieldFlags(object):
             yield flag
 
     def __getattr__(self, key):
-        if key not in self._flags:
+        if key == '_flags':
+            # Since __getattr__ is for fallback, reaching here from Python
+            # means that there's no '_flags' attribute in this object,
+            # which may be caused by intermediate state while copying etc.
+            raise AttributeError(
+                "'%s' object has no attribute '%s'" % (self.__class__.__name__, key)
+            )
+        try:
+            flags = self._flags
+        except AttributeError:
+            raise AttributeError(
+                "'%s' object has no attribute '%s'" % (self.__class__.__name__, key)
+            )
+        try:
+            flag = flags.index(key)
+        except ValueError:
             raise AttributeError("flag {} is not registered".format(key))
-        return Bit(self._flags.index(key))
+        return Bit(flag)
 
     def iteritems(self):
         for flag in self._flags:
