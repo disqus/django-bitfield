@@ -23,7 +23,7 @@ class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
         return super(BitFieldCheckboxSelectMultiple, self).render(
             name, value, attrs=attrs)
 
-    def _has_changed(self, initial, data):
+    def has_changed(self, initial, data):
         if initial is None:
             initial = []
         if data is None:
