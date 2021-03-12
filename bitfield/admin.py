@@ -23,7 +23,7 @@ class BitFieldListFilter(FieldListFilter):
 
     def queryset(self, request, queryset):
         filter_kwargs = dict(
-            (p, BitHandler(v, ()))
+            (p, BitHandler(v, getattr(queryset.model, p)))
             for p, v in six.iteritems(self.used_parameters)
         )
         if not filter_kwargs:
