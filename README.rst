@@ -113,6 +113,13 @@ BitFieldListFilter is in ``bitfield.admin`` module::
 Changelog
 =========
 
+2.1.0 - 2020-05-25:
+
+- Add support for Django 3.1, 3.2 (No changes needed).
+- Add support for Python 3.8, 3.9.
+- Fixed multiple bugs with use in the Django admin.
+- Removed dead compatibility code.
+
 2.0.1 - 2020-01-25:
 
 - Add support for Django 3.0.
