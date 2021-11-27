@@ -1,7 +1,12 @@
+import django
 import six
 
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+if django.VERSION < (2, 0):
+    from django.utils.translation import ugettext_lazy as _
+else:
+    # Aliased since Django 2.0 https://github.com/django/django/blob/2.0/django/utils/translation/__init__.py#L80-L81
+    from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import FieldListFilter
 from django.contrib.admin.options import IncorrectLookupParameters
 
