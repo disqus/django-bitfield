@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.forms import CheckboxSelectMultiple, IntegerField, ValidationError
 
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from bitfield.types import BitHandler
 
@@ -30,8 +30,8 @@ class BitFieldCheckboxSelectMultiple(CheckboxSelectMultiple):
             data = []
         if initial != data:
             return True
-        initial_set = set([force_text(value) for value in initial])
-        data_set = set([force_text(value) for value in data])
+        initial_set = set([force_str(value) for value in initial])
+        data_set = set([force_str(value) for value in data])
         return data_set != initial_set
 
 
