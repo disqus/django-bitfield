@@ -1,13 +1,16 @@
+import django
 import six
 
-from django.db.models import F
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+if django.VERSION < (2, 0):
+    from django.utils.translation import ugettext_lazy as _
+else:
+    # Aliased since Django 2.0 https://github.com/django/django/blob/2.0/django/utils/translation/__init__.py#L80-L81
+    from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import FieldListFilter
 from django.contrib.admin.options import IncorrectLookupParameters
 
-from bitfield import Bit
-from bitfield.compat import bitor
+from bitfield import Bit, BitHandler
 
 
 class BitFieldListFilter(FieldListFilter):
@@ -24,9 +27,14 @@ class BitFieldListFilter(FieldListFilter):
             field, request, params, model, model_admin, field_path)
 
     def queryset(self, request, queryset):
-        filter = dict((p, bitor(F(p), v)) for p, v in six.iteritems(self.used_parameters))
+        filter_kwargs = dict(
+            (p, BitHandler(v, ()))
+            for p, v in six.iteritems(self.used_parameters)
+        )
+        if not filter_kwargs:
+            return queryset
         try:
-            return queryset.filter(**filter)
+            return queryset.filter(**filter_kwargs)
         except ValidationError as e:
             raise IncorrectLookupParameters(e)
 

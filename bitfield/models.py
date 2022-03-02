@@ -28,9 +28,24 @@ class BitFieldFlags(object):
             yield flag
 
     def __getattr__(self, key):
-        if key not in self._flags:
-            raise AttributeError
-        return Bit(self._flags.index(key))
+        if key == '_flags':
+            # Since __getattr__ is for fallback, reaching here from Python
+            # means that there's no '_flags' attribute in this object,
+            # which may be caused by intermediate state while copying etc.
+            raise AttributeError(
+                "'%s' object has no attribute '%s'" % (self.__class__.__name__, key)
+            )
+        try:
+            flags = self._flags
+        except AttributeError:
+            raise AttributeError(
+                "'%s' object has no attribute '%s'" % (self.__class__.__name__, key)
+            )
+        try:
+            flag = flags.index(key)
+        except ValueError:
+            raise AttributeError("flag {} is not registered".format(key))
+        return Bit(flag)
 
     def iteritems(self):
         for flag in self._flags:
@@ -116,20 +131,9 @@ class BitField(BigIntegerField):
         self.flags = flags
         self.labels = labels
 
-    def south_field_triple(self):
-        "Returns a suitable description of this field for South."
-        from south.modelsinspector import introspector
-        field_class = "django.db.models.fields.BigIntegerField"
-        args, kwargs = introspector(self)
-        return (field_class, args, kwargs)
-
     def formfield(self, form_class=BitFormField, **kwargs):
         choices = [(k, self.labels[self.flags.index(k)]) for k in self.flags]
         return Field.formfield(self, form_class, choices=choices, **kwargs)
-
-    def pre_save(self, instance, add):
-        value = getattr(instance, self.attname)
-        return value
 
     def get_prep_value(self, value):
         if value is None:
@@ -142,27 +146,6 @@ class BitField(BigIntegerField):
     #     if isinstance(value, Bit):
     #         return BitQuerySaveWrapper(self.model._meta.db_table, self.name, value)
     #     return super(BitField, self).get_db_prep_save(value, connection=connection)
-
-    def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
-        if isinstance(getattr(value, 'expression', None), Bit):
-            value = value.expression
-        if isinstance(value, (BitHandler, Bit)):
-            if hasattr(self, 'class_lookups'):
-                # Django 1.7+
-                return [value.mask]
-            else:
-                return BitQueryLookupWrapper(self.model._meta.db_table, self.db_column or self.name, value)
-        return BigIntegerField.get_db_prep_lookup(self, lookup_type=lookup_type, value=value,
-                                                  connection=connection, prepared=prepared)
-
-    def get_prep_lookup(self, lookup_type, value):
-        if isinstance(getattr(value, 'expression', None), Bit):
-            value = value.expression
-        if isinstance(value, Bit):
-            if lookup_type in ('exact',):
-                return value
-            raise TypeError('Lookup type %r not supported with `Bit` type.' % lookup_type)
-        return BigIntegerField.get_prep_lookup(self, lookup_type, value)
 
     def to_python(self, value):
         if isinstance(value, Bit):
@@ -189,10 +172,7 @@ class BitField(BigIntegerField):
         return name, path, args, kwargs
 
 
-try:
-    BitField.register_lookup(BitQueryLookupWrapper)
-except AttributeError:
-    pass
+BitField.register_lookup(BitQueryLookupWrapper)
 
 
 class CompositeBitFieldWrapper(object):
@@ -240,7 +220,7 @@ class CompositeBitField(object):
     def contribute_to_class(self, cls, name):
         self.name = name
         self.model = cls
-        cls._meta.virtual_fields.append(self)
+        cls._meta.private_fields.append(self)
 
         signals.class_prepared.connect(self.validate_fields, sender=cls)
 

@@ -7,7 +7,6 @@ from django.db.models import F
 from django.test import TestCase
 
 from bitfield import BitHandler, Bit, BitField
-from bitfield.compat import bitand, bitor
 
 from .forms import BitFieldTestModelForm
 from .models import BitFieldTestModel, CompositeBitFieldTestModel
@@ -25,117 +24,117 @@ class BitHandlerTest(TestCase):
     def test_defaults(self):
         bithandler = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
         # Default value of 0.
-        self.assertEquals(int(bithandler), 0)
+        self.assertEqual(int(bithandler), 0)
         # Test bit numbers.
-        self.assertEquals(int(bithandler.FLAG_0.number), 0)
-        self.assertEquals(int(bithandler.FLAG_1.number), 1)
-        self.assertEquals(int(bithandler.FLAG_2.number), 2)
-        self.assertEquals(int(bithandler.FLAG_3.number), 3)
-        # Negative test non-existant key.
+        self.assertEqual(int(bithandler.FLAG_0.number), 0)
+        self.assertEqual(int(bithandler.FLAG_1.number), 1)
+        self.assertEqual(int(bithandler.FLAG_2.number), 2)
+        self.assertEqual(int(bithandler.FLAG_3.number), 3)
+        # Negative test non-existent key.
         self.assertRaises(AttributeError, lambda: bithandler.FLAG_4)
         # Test bool().
-        self.assertEquals(bool(bithandler.FLAG_0), False)
-        self.assertEquals(bool(bithandler.FLAG_1), False)
-        self.assertEquals(bool(bithandler.FLAG_2), False)
-        self.assertEquals(bool(bithandler.FLAG_3), False)
+        self.assertEqual(bool(bithandler.FLAG_0), False)
+        self.assertEqual(bool(bithandler.FLAG_1), False)
+        self.assertEqual(bool(bithandler.FLAG_2), False)
+        self.assertEqual(bool(bithandler.FLAG_3), False)
 
     def test_nonzero_default(self):
         bithandler = BitHandler(1, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
-        self.assertEquals(bool(bithandler.FLAG_0), True)
-        self.assertEquals(bool(bithandler.FLAG_1), False)
-        self.assertEquals(bool(bithandler.FLAG_2), False)
-        self.assertEquals(bool(bithandler.FLAG_3), False)
+        self.assertEqual(bool(bithandler.FLAG_0), True)
+        self.assertEqual(bool(bithandler.FLAG_1), False)
+        self.assertEqual(bool(bithandler.FLAG_2), False)
+        self.assertEqual(bool(bithandler.FLAG_3), False)
 
         bithandler = BitHandler(2, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
-        self.assertEquals(bool(bithandler.FLAG_0), False)
-        self.assertEquals(bool(bithandler.FLAG_1), True)
-        self.assertEquals(bool(bithandler.FLAG_2), False)
-        self.assertEquals(bool(bithandler.FLAG_3), False)
+        self.assertEqual(bool(bithandler.FLAG_0), False)
+        self.assertEqual(bool(bithandler.FLAG_1), True)
+        self.assertEqual(bool(bithandler.FLAG_2), False)
+        self.assertEqual(bool(bithandler.FLAG_3), False)
 
         bithandler = BitHandler(3, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
-        self.assertEquals(bool(bithandler.FLAG_0), True)
-        self.assertEquals(bool(bithandler.FLAG_1), True)
-        self.assertEquals(bool(bithandler.FLAG_2), False)
-        self.assertEquals(bool(bithandler.FLAG_3), False)
+        self.assertEqual(bool(bithandler.FLAG_0), True)
+        self.assertEqual(bool(bithandler.FLAG_1), True)
+        self.assertEqual(bool(bithandler.FLAG_2), False)
+        self.assertEqual(bool(bithandler.FLAG_3), False)
 
         bithandler = BitHandler(4, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
-        self.assertEquals(bool(bithandler.FLAG_0), False)
-        self.assertEquals(bool(bithandler.FLAG_1), False)
-        self.assertEquals(bool(bithandler.FLAG_2), True)
-        self.assertEquals(bool(bithandler.FLAG_3), False)
+        self.assertEqual(bool(bithandler.FLAG_0), False)
+        self.assertEqual(bool(bithandler.FLAG_1), False)
+        self.assertEqual(bool(bithandler.FLAG_2), True)
+        self.assertEqual(bool(bithandler.FLAG_3), False)
 
     def test_mutation(self):
         bithandler = BitHandler(0, ('FLAG_0', 'FLAG_1', 'FLAG_2', 'FLAG_3'))
-        self.assertEquals(bool(bithandler.FLAG_0), False)
-        self.assertEquals(bool(bithandler.FLAG_1), False)
-        self.assertEquals(bool(bithandler.FLAG_2), False)
-        self.assertEquals(bool(bithandler.FLAG_3), False)
+        self.assertEqual(bool(bithandler.FLAG_0), False)
+        self.assertEqual(bool(bithandler.FLAG_1), False)
+        self.assertEqual(bool(bithandler.FLAG_2), False)
+        self.assertEqual(bool(bithandler.FLAG_3), False)
 
         bithandler = BitHandler(bithandler | 1, bithandler._keys)
-        self.assertEquals(bool(bithandler.FLAG_0), True)
-        self.assertEquals(bool(bithandler.FLAG_1), False)
-        self.assertEquals(bool(bithandler.FLAG_2), False)
-        self.assertEquals(bool(bithandler.FLAG_3), False)
+        self.assertEqual(bool(bithandler.FLAG_0), True)
+        self.assertEqual(bool(bithandler.FLAG_1), False)
+        self.assertEqual(bool(bithandler.FLAG_2), False)
+        self.assertEqual(bool(bithandler.FLAG_3), False)
 
         bithandler ^= 3
-        self.assertEquals(int(bithandler), 2)
+        self.assertEqual(int(bithandler), 2)
 
-        self.assertEquals(bool(bithandler & 1), False)
+        self.assertEqual(bool(bithandler & 1), False)
 
         bithandler.FLAG_0 = False
-        self.assertEquals(bithandler.FLAG_0, False)
+        self.assertEqual(bithandler.FLAG_0, False)
 
         bithandler.FLAG_1 = True
-        self.assertEquals(bithandler.FLAG_0, False)
-        self.assertEquals(bithandler.FLAG_1, True)
+        self.assertEqual(bithandler.FLAG_0, False)
+        self.assertEqual(bithandler.FLAG_1, True)
 
         bithandler.FLAG_2 = False
-        self.assertEquals(bithandler.FLAG_0, False)
-        self.assertEquals(bithandler.FLAG_1, True)
-        self.assertEquals(bithandler.FLAG_2, False)
+        self.assertEqual(bithandler.FLAG_0, False)
+        self.assertEqual(bithandler.FLAG_1, True)
+        self.assertEqual(bithandler.FLAG_2, False)
 
 
 class BitTest(TestCase):
     def test_int(self):
         bit = Bit(0)
-        self.assertEquals(int(bit), 1)
-        self.assertEquals(bool(bit), True)
+        self.assertEqual(int(bit), 1)
+        self.assertEqual(bool(bit), True)
         self.assertFalse(not bit)
 
     def test_comparison(self):
-        self.assertEquals(Bit(0), Bit(0))
-        self.assertNotEquals(Bit(1), Bit(0))
-        self.assertNotEquals(Bit(0, 0), Bit(0, 1))
-        self.assertEquals(Bit(0, 1), Bit(0, 1))
-        self.assertEquals(Bit(0), 1)
+        self.assertEqual(Bit(0), Bit(0))
+        self.assertNotEqual(Bit(1), Bit(0))
+        self.assertNotEqual(Bit(0, 0), Bit(0, 1))
+        self.assertEqual(Bit(0, 1), Bit(0, 1))
+        self.assertEqual(Bit(0), 1)
 
     def test_and(self):
-        self.assertEquals(1 & Bit(2), 0)
-        self.assertEquals(1 & Bit(0), 1)
-        self.assertEquals(1 & ~Bit(0), 0)
-        self.assertEquals(Bit(0) & Bit(2), 0)
-        self.assertEquals(Bit(0) & Bit(0), 1)
-        self.assertEquals(Bit(0) & ~Bit(0), 0)
+        self.assertEqual(1 & Bit(2), 0)
+        self.assertEqual(1 & Bit(0), 1)
+        self.assertEqual(1 & ~Bit(0), 0)
+        self.assertEqual(Bit(0) & Bit(2), 0)
+        self.assertEqual(Bit(0) & Bit(0), 1)
+        self.assertEqual(Bit(0) & ~Bit(0), 0)
 
     def test_or(self):
-        self.assertEquals(1 | Bit(2), 5)
-        self.assertEquals(1 | Bit(5), 33)
-        self.assertEquals(1 | ~Bit(2), -5)
-        self.assertEquals(Bit(0) | Bit(2), 5)
-        self.assertEquals(Bit(0) | Bit(5), 33)
-        self.assertEquals(Bit(0) | ~Bit(2), -5)
+        self.assertEqual(1 | Bit(2), 5)
+        self.assertEqual(1 | Bit(5), 33)
+        self.assertEqual(1 | ~Bit(2), -5)
+        self.assertEqual(Bit(0) | Bit(2), 5)
+        self.assertEqual(Bit(0) | Bit(5), 33)
+        self.assertEqual(Bit(0) | ~Bit(2), -5)
 
     def test_xor(self):
-        self.assertEquals(1 ^ Bit(2), 5)
-        self.assertEquals(1 ^ Bit(0), 0)
-        self.assertEquals(1 ^ Bit(1), 3)
-        self.assertEquals(1 ^ Bit(5), 33)
-        self.assertEquals(1 ^ ~Bit(2), -6)
-        self.assertEquals(Bit(0) ^ Bit(2), 5)
-        self.assertEquals(Bit(0) ^ Bit(0), 0)
-        self.assertEquals(Bit(0) ^ Bit(1), 3)
-        self.assertEquals(Bit(0) ^ Bit(5), 33)
-        self.assertEquals(Bit(0) ^ ~Bit(2), -6)
+        self.assertEqual(1 ^ Bit(2), 5)
+        self.assertEqual(1 ^ Bit(0), 0)
+        self.assertEqual(1 ^ Bit(1), 3)
+        self.assertEqual(1 ^ Bit(5), 33)
+        self.assertEqual(1 ^ ~Bit(2), -6)
+        self.assertEqual(Bit(0) ^ Bit(2), 5)
+        self.assertEqual(Bit(0) ^ Bit(0), 0)
+        self.assertEqual(Bit(0) ^ Bit(1), 3)
+        self.assertEqual(Bit(0) ^ Bit(5), 33)
+        self.assertEqual(Bit(0) ^ ~Bit(2), -6)
 
 
 class BitFieldTest(TestCase):
@@ -178,22 +177,44 @@ class BitFieldTest(TestCase):
         self.assertFalse(BitFieldTestModel.objects.exclude(flags=BitFieldTestModel.flags.FLAG_0).exists())
         self.assertFalse(BitFieldTestModel.objects.exclude(flags=BitFieldTestModel.flags.FLAG_1).exists())
 
+    def test_select_complex_expression(self):
+        BitFieldTestModel.objects.create(flags=3)
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=F('flags').bitor(BitFieldTestModel.flags.FLAG_1)).exists())
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=F('flags').bitor(BitFieldTestModel.flags.FLAG_0)).exists())
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=F('flags').bitor(BitFieldTestModel.flags.FLAG_0).bitor(BitFieldTestModel.flags.FLAG_1)).exists())
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)).exists())
+        self.assertTrue(BitFieldTestModel.objects.filter(flags=F('flags').bitand(15)).exists())
+        self.assertTrue(BitFieldTestModel.objects.exclude(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_2)).exists())
+        self.assertTrue(BitFieldTestModel.objects.exclude(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_3)).exists())
+        self.assertTrue(BitFieldTestModel.objects.exclude(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_2 | BitFieldTestModel.flags.FLAG_3)).exists())
+        self.assertTrue(BitFieldTestModel.objects.exclude(flags=F('flags').bitand(12)).exists())
+
+        self.assertFalse(BitFieldTestModel.objects.exclude(flags=F('flags').bitor(BitFieldTestModel.flags.FLAG_1)).exists())
+        self.assertFalse(BitFieldTestModel.objects.exclude(flags=F('flags').bitor(BitFieldTestModel.flags.FLAG_0)).exists())
+        self.assertFalse(BitFieldTestModel.objects.exclude(flags=F('flags').bitor(BitFieldTestModel.flags.FLAG_0).bitor(BitFieldTestModel.flags.FLAG_1)).exists())
+        self.assertFalse(BitFieldTestModel.objects.exclude(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)).exists())
+        self.assertFalse(BitFieldTestModel.objects.exclude(flags=F('flags').bitand(15)).exists())
+        self.assertFalse(BitFieldTestModel.objects.filter(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_2)).exists())
+        self.assertFalse(BitFieldTestModel.objects.filter(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_3)).exists())
+        self.assertFalse(BitFieldTestModel.objects.filter(flags=F('flags').bitand(BitFieldTestModel.flags.FLAG_2 | BitFieldTestModel.flags.FLAG_3)).exists())
+        self.assertFalse(BitFieldTestModel.objects.filter(flags=F('flags').bitand(12)).exists())
+
     def test_update(self):
         instance = BitFieldTestModel.objects.create(flags=0)
         self.assertFalse(instance.flags.FLAG_0)
 
-        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=bitor(F('flags'), BitFieldTestModel.flags.FLAG_1))
+        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags').bitor(BitFieldTestModel.flags.FLAG_1))
         instance = BitFieldTestModel.objects.get(pk=instance.pk)
         self.assertTrue(instance.flags.FLAG_1)
 
-        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=bitor(F('flags'), ((~BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_3))))
+        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags').bitor(((~BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_3))))
         instance = BitFieldTestModel.objects.get(pk=instance.pk)
         self.assertFalse(instance.flags.FLAG_0)
         self.assertTrue(instance.flags.FLAG_1)
         self.assertTrue(instance.flags.FLAG_3)
         self.assertFalse(BitFieldTestModel.objects.filter(flags=BitFieldTestModel.flags.FLAG_0).exists())
 
-        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=bitand(F('flags'), ~BitFieldTestModel.flags.FLAG_3))
+        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags').bitand(~BitFieldTestModel.flags.FLAG_3))
         instance = BitFieldTestModel.objects.get(pk=instance.pk)
         self.assertFalse(instance.flags.FLAG_0)
         self.assertTrue(instance.flags.FLAG_1)
@@ -205,7 +226,7 @@ class BitFieldTest(TestCase):
 
         instance.flags.FLAG_1 = True
 
-        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=bitor(F('flags'), instance.flags))
+        BitFieldTestModel.objects.filter(pk=instance.pk).update(flags=F('flags').bitor(instance.flags))
         instance = BitFieldTestModel.objects.get(pk=instance.pk)
         self.assertTrue(instance.flags.FLAG_1)
 
@@ -256,7 +277,7 @@ class BitFieldTest(TestCase):
         except ValueError:
             self.fail("It should work well with these flags")
 
-        self.assertEquals(bf.flags, ['zero', 'first', 'second', '', '', '', '', '', '', '', 'tenth'])
+        self.assertEqual(bf.flags, ['zero', 'first', 'second', '', '', '', '', '', '', '', 'tenth'])
         self.assertRaises(ValueError, BitField, flags={})
         self.assertRaises(ValueError, BitField, flags={'wrongkey': 'wrongkey'})
         self.assertRaises(ValueError, BitField, flags={'1': 'non_int_key'})
@@ -270,7 +291,7 @@ class BitFieldTest(TestCase):
                 'FLAG_3',
             ), default=('FLAG_1', 'FLAG_2'))
         field = TestModel._meta.get_field('flags')
-        self.assertEquals(field.default, TestModel.flags.FLAG_1 | TestModel.flags.FLAG_2)
+        self.assertEqual(field.default, TestModel.flags.FLAG_1 | TestModel.flags.FLAG_2)
 
 
 class BitFieldSerializationTest(TestCase):
@@ -287,8 +308,8 @@ class BitFieldSerializationTest(TestCase):
         inst = BitFieldTestModel.objects.create(flags=1)
         data = pickle.dumps(inst)
         inst = pickle.loads(data)
-        self.assertEquals(type(inst.flags), BitHandler)
-        self.assertEquals(int(inst.flags), 1)
+        self.assertEqual(type(inst.flags), BitHandler)
+        self.assertEqual(int(inst.flags), 1)
 
     def test_added_field(self):
         bf = BitFieldTestModel()
@@ -357,11 +378,11 @@ class BitFormFieldTest(TestCase):
         ]
         for data in data_dicts:
             form = BitFieldTestModelForm(data=data)
-            self.failUnless(form.is_valid())
+            self.assertTrue(form.is_valid())
             instance = form.save()
             flags = data['flags'] if 'flags' in data else []
             for k in BitFieldTestModel.flags:
-                self.assertEquals(bool(getattr(instance.flags, k)), k in flags)
+                self.assertEqual(bool(getattr(instance.flags, k)), k in flags)
 
     def test_form_update(self):
         instance = BitFieldTestModel.objects.create(flags=0)
@@ -370,21 +391,21 @@ class BitFormFieldTest(TestCase):
 
         data = {'flags': ['FLAG_0', 'FLAG_1']}
         form = BitFieldTestModelForm(data=data, instance=instance)
-        self.failUnless(form.is_valid())
+        self.assertTrue(form.is_valid())
         instance = form.save()
         for k in BitFieldTestModel.flags:
-            self.assertEquals(bool(getattr(instance.flags, k)), k in data['flags'])
+            self.assertEqual(bool(getattr(instance.flags, k)), k in data['flags'])
 
         data = {'flags': ['FLAG_2', 'FLAG_3']}
         form = BitFieldTestModelForm(data=data, instance=instance)
-        self.failUnless(form.is_valid())
+        self.assertTrue(form.is_valid())
         instance = form.save()
         for k in BitFieldTestModel.flags:
-            self.assertEquals(bool(getattr(instance.flags, k)), k in data['flags'])
+            self.assertEqual(bool(getattr(instance.flags, k)), k in data['flags'])
 
         data = {'flags': []}
         form = BitFieldTestModelForm(data=data, instance=instance)
-        self.failUnless(form.is_valid())
+        self.assertTrue(form.is_valid())
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertFalse(bool(getattr(instance.flags, k)))

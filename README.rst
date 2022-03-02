@@ -11,7 +11,7 @@ Provides a BitField like class (using a BigIntegerField) for your Django models.
 Requirements
 ============
 
-* Django >= 1.4
+* Django >= 1.10.8
 * PostgreSQL (see notes)
 
 **Notes:**
@@ -85,17 +85,19 @@ Enjoy!
 Admin
 =====
 
-To use the widget in the admin, you'll need to update your ModelAdmin. Add the
-following lines to your ModelAdmin::
+To use the widget in the admin, you'll need to import the classes and then update or create
+a ModelAdmin with these formfield_overrides lines in your admin.py::
 
+    from bitfield import BitField
+    from bitfield.forms import BitFieldCheckboxSelectMultiple
+
+    class MyModelAdmin(admin.ModelAdmin):
 	formfield_overrides = {
 		BitField: {'widget': BitFieldCheckboxSelectMultiple},
 	}
+	
+    admin.site.register(MyModel, MyModelAdmin)
 
-Make sure you've imported the classes by adding these lines to the top of the file::
-
-	from bitfield import BitField
-	from bitfield.forms import BitFieldCheckboxSelectMultiple
 
 There is also a ``BitFieldListFilter`` list filter (Django 1.4 or newer).
 To use it set ``list_filter`` ModelAdmin option::
@@ -107,3 +109,23 @@ To use it set ``list_filter`` ModelAdmin option::
 BitFieldListFilter is in ``bitfield.admin`` module::
 
     from bitfield.admin import BitFieldListFilter
+
+Changelog
+=========
+
+2.1.0 - 2021-05-25:
+
+- Add support for Django 3.1, 3.2 (No changes needed).
+- Add support for Python 3.8, 3.9.
+- Fixed multiple bugs with use in the Django admin.
+- Removed dead compatibility code.
+
+2.0.1 - 2020-01-25:
+
+- Add support for Django 3.0.
+
+2.0.0 - 2020-01-24:
+
+- Drop support for Django versions below 1.10.
+- Use _meta.private_fields instead of deprecated _meta.virtual_fields in CompositeBitField.
+- Add testing with python 3.6, 3.7 and Django 2.x to travis configuration.
