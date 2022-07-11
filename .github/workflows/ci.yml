@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+    tags: ["*"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.5"
+          - "3.6"
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+    steps:
+      - name: Set up PostgreSQL
+        run: |
+          echo 'local all all peer map=mymap' | sudo tee /etc/postgresql/14/main/pg_hba.conf
+          echo "mymap $(id -un) postgres" | sudo tee /etc/postgresql/14/main/pg_ident.conf
+          sudo /etc/init.d/postgresql restart 14
+          createdb -U postgres bitfield
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e .[tests] tox tox-gh-actions
+      - run: PYFLAKES_NODOCTEST=1 flake8 bitfield
+      - run: tox
