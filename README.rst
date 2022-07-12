@@ -6,8 +6,6 @@ django-bitfield
 
 Provides a BitField like class (using a BigIntegerField) for your Django models.
 
-(If you're upgrading from a version before 1.2 the API has changed greatly and is backwards incompatible!)
-
 Requirements
 ============
 
