@@ -1,8 +1,8 @@
 django-bitfield
 ---------------
 
-.. image:: https://api.travis-ci.org/disqus/django-bitfield.png?branch=master
-    :target: https://travis-ci.org/disqus/django-bitfield
+.. image:: https://github.com/disqus/django-bitfield/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/disqus/django-bitfield/actions
 
 Provides a BitField like class (using a BigIntegerField) for your Django models.
 
