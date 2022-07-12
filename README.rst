@@ -9,7 +9,8 @@ Provides a BitField like class (using a BigIntegerField) for your Django models.
 Requirements
 ============
 
-* Django >= 1.10.8
+* Django >= 1.11 (a newer version with current security support is
+  highly recommended).
 * PostgreSQL (see notes)
 
 **Notes:**
