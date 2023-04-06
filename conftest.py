@@ -21,7 +21,7 @@ def pytest_configure(config):
 
         if test_db == 'postgres':
             DATABASES['default'].update({
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'ENGINE': 'django.db.backends.postgresql',
                 'USER': 'postgres',
             })
         elif test_db == 'mysql':
