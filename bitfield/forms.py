@@ -57,7 +57,10 @@ class BitFormField(IntegerField):
         result = BitHandler(0, [k for k, v in self.choices])
         for k in value:
             try:
-                setattr(result, str(k), True)
+                try:
+                    setattr(result, unicode(k).encode("utf8"), True)
+                except NameError:
+                    setattr(result, str(k), True)
             except AttributeError:
                 raise ValidationError('Unknown choice: %r' % (k,))
         return int(result)
