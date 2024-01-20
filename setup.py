@@ -31,7 +31,6 @@ setup(
     zip_safe=False,
     install_requires=[
         'Django>=1.11.29',
-        'six',
     ],
     extras_require={
         'tests': [

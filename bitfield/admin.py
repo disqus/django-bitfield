@@ -1,5 +1,4 @@
 import django
-import six
 
 from django.core.exceptions import ValidationError
 if django.VERSION < (2, 0):
@@ -29,7 +28,7 @@ class BitFieldListFilter(FieldListFilter):
     def queryset(self, request, queryset):
         filter_kwargs = dict(
             (p, BitHandler(v, ()))
-            for p, v in six.iteritems(self.used_parameters)
+            for p, v in self.used_parameters.items()
         )
         if not filter_kwargs:
             return queryset
