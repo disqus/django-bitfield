@@ -1,8 +1,3 @@
-from __future__ import absolute_import
-
-from six import string_types
-
-
 def cmp(a, b):
     return (a > b) - (a < b)
 
@@ -238,7 +233,7 @@ class BitHandler(object):
             yield (k, getattr(self, k).is_set)
 
     def get_label(self, flag):
-        if isinstance(flag, string_types):
+        if isinstance(flag, str):
             flag = self._keys.index(flag)
         if isinstance(flag, Bit):
             flag = flag.number
