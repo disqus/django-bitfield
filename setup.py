@@ -12,7 +12,12 @@ class GetVersion(ast.NodeVisitor):
     def visit_Assign(self, node):
         if any(target.id == 'VERSION' for target in node.targets):
             assert not hasattr(self, 'VERSION')
-            self.VERSION = node.value.value
+            if isinstance(node.value, ast.Constant):
+                self.VERSION = node.value.value
+            elif isinstance(node.value, ast.Str):
+                self.VERSION = node.value.s
+            else:
+                self.VERSION = node.value.value
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.rst')) as f:
