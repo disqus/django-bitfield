@@ -255,5 +255,6 @@ try:
     from django.db.backends.postgresql.base import Database
     Database.extensions.register_adapter(Bit, lambda x: Database.extensions.AsIs(int(x)))
     Database.extensions.register_adapter(BitHandler, lambda x: Database.extensions.AsIs(int(x)))
-except ImproperlyConfigured:
+# Ignore in psycopg3 where there is no Database.extensions nor any need to adapt types
+except (ImproperlyConfigured, AttributeError):
     pass
