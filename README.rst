@@ -112,7 +112,7 @@ BitFieldListFilter is in ``bitfield.admin`` module::
 Changelog
 =========
 
-2.4.0 - 2026-01-19:
+2.4.0 - 2026-08-02:
 
 - Add support for Python 3.14.
 
