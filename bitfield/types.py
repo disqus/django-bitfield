@@ -257,3 +257,22 @@ try:
     Database.extensions.register_adapter(BitHandler, lambda x: Database.extensions.AsIs(int(x)))
 except ImproperlyConfigured:
     pass
+
+# psycopg3 adapter registration: register a dumper that
+# encodes Bit/BitHandler as BIGINT so parameters are typed correctly.
+try:
+    from psycopg import adapters
+    from psycopg.adapt import Dumper
+except Exception:
+    pass
+else:
+
+    class _BitLikeDumper(Dumper):
+        # OID 20 is int8 (BIGINT) in PostgreSQL, matching Django's BigIntegerField
+        oid = 20
+
+        def dump(self, obj):
+            return str(int(obj)).encode()
+
+    adapters.register_dumper(Bit, _BitLikeDumper)
+    adapters.register_dumper(BitHandler, _BitLikeDumper)
