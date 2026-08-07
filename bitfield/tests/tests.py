@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import pickle
 
-from django.db import connection, models
+from django.db import models
 from django.db.models import F
 from django.test import TestCase
 
@@ -155,11 +155,12 @@ class BitFieldTest(TestCase):
         self.assertTrue(instance.flags.FLAG_2)
         self.assertTrue(instance.flags.FLAG_3)
 
-        cursor = connection.cursor()
-        flags_field = BitFieldTestModel._meta.get_field('flags')
-        flags_db_column = flags_field.db_column or flags_field.name
-        cursor.execute("INSERT INTO %s (%s) VALUES (-1)" % (BitFieldTestModel._meta.db_table, flags_db_column))
-        # There should only be the one row we inserted through the cursor.
+        # Bypass BitField.to_python and insert (-1) directly.
+        instance = BitFieldTestModel()
+        instance.__dict__['flags'] = models.Value(-1, output_field=models.IntegerField())
+        instance.save()
+
+        # There should only be the one row we inserted with a direct value.
         instance = BitFieldTestModel.objects.get(flags=-1)
         self.assertTrue(instance.flags.FLAG_0)
         self.assertTrue(instance.flags.FLAG_1)
