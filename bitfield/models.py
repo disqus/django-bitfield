@@ -95,6 +95,17 @@ class BitField(BigIntegerField):
         super(BitField, self).contribute_to_class(cls, name, **kwargs)
         setattr(cls, self.name, BitFieldCreator(self))
 
+        def get_active(zelf):
+            bf = getattr(zelf, self.name)
+            return [ x for x, y in bf.items() if y ] if bf else []
+
+        def get_display(zelf):
+            bf = getattr(zelf, self.name)
+            return ', '.join([ x for x, y in bf.items() if y ]) if bf else ''
+
+        setattr(cls, f'get_{self.name}_active', get_active)
+        setattr(cls, f'get_{self.name}_display', get_display)
+
     def __init__(self, flags, default=None, *args, **kwargs):
         if isinstance(flags, dict):
             # Get only integer keys in correct range
