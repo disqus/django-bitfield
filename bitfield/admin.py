@@ -26,10 +26,12 @@ class BitFieldListFilter(FieldListFilter):
             field, request, params, model, model_admin, field_path)
 
     def queryset(self, request, queryset):
-        filter_kwargs = dict(
-            (p, BitHandler(v, ()))
-            for p, v in self.used_parameters.items()
-        )
+        filter_kwargs = {}
+        for p, v in self.used_parameters.items():
+            # Django >= 5.0 passes the values of each parameter as a list.
+            if isinstance(v, list):
+                v = v[-1]
+            filter_kwargs[p] = BitHandler(v, ())
         if not filter_kwargs:
             return queryset
         try:

@@ -409,3 +409,36 @@ class BitFormFieldTest(TestCase):
         instance = form.save()
         for k in BitFieldTestModel.flags:
             self.assertFalse(bool(getattr(instance.flags, k)))
+
+
+class BitFieldListFilterTest(TestCase):
+    def get_changelist(self, query):
+        from django.contrib import admin
+        from django.test import RequestFactory
+
+        from bitfield.admin import BitFieldListFilter
+
+        class BitFieldTestModelAdmin(admin.ModelAdmin):
+            list_filter = (('flags', BitFieldListFilter),)
+
+        class User(object):
+            def has_perm(self, perm, obj=None):
+                return True
+
+        model_admin = BitFieldTestModelAdmin(BitFieldTestModel, admin.AdminSite())
+        request = RequestFactory().get('/', query)
+        request.user = User()
+        return model_admin.get_changelist_instance(request)
+
+    def test_filter(self):
+        obj_1 = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_0)
+        obj_2 = BitFieldTestModel.objects.create(flags=BitFieldTestModel.flags.FLAG_1)
+        obj_3 = BitFieldTestModel.objects.create(
+            flags=BitFieldTestModel.flags.FLAG_0 | BitFieldTestModel.flags.FLAG_1)
+
+        changelist = self.get_changelist({})
+        self.assertEqual(set(changelist.queryset), {obj_1, obj_2, obj_3})
+
+        changelist = self.get_changelist(
+            {'flags': str(BitFieldTestModel.flags.FLAG_1.mask)})
+        self.assertEqual(set(changelist.queryset), {obj_2, obj_3})
