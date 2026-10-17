@@ -253,7 +253,28 @@ except ImproperlyConfigured:
 
 try:
     from django.db.backends.postgresql.base import Database
-    Database.extensions.register_adapter(Bit, lambda x: Database.extensions.AsIs(int(x)))
-    Database.extensions.register_adapter(BitHandler, lambda x: Database.extensions.AsIs(int(x)))
 except ImproperlyConfigured:
     pass
+else:
+    if hasattr(Database, 'extensions'):
+        # psycopg2
+        Database.extensions.register_adapter(Bit, lambda x: Database.extensions.AsIs(int(x)))
+        Database.extensions.register_adapter(BitHandler, lambda x: Database.extensions.AsIs(int(x)))
+    else:
+        # psycopg 3 (used by Django >= 4.2 when installed)
+        from psycopg.types.numeric import Int8BinaryDumper, Int8Dumper
+
+        class _BitDumper(Int8Dumper):
+            def dump(self, obj):
+                return super().dump(int(obj))
+
+            def quote(self, obj):
+                return super().quote(int(obj))
+
+        class _BitBinaryDumper(Int8BinaryDumper):
+            def dump(self, obj):
+                return super().dump(int(obj))
+
+        for _cls in (Bit, BitHandler):
+            Database.adapters.register_dumper(_cls, _BitDumper)
+            Database.adapters.register_dumper(_cls, _BitBinaryDumper)
